@@ -33,8 +33,6 @@ function main:close()
   end
 end
 
-function help:check() end
-
 function help:init()
   self.ns = create_ns('ColorsHelp')
   self.buf = create_buf(false, true)
@@ -50,8 +48,8 @@ end
 function help:add_hl(len)
   add_hl(self.buf, self.ns, 'Special', 0, 0, -1)
   for i = 1, len, 1 do
-    add_hl(self.buf, self.ns, 'String', i, 8, -1)
-    add_hl(self.buf, self.ns, 'Keyword', i, 0, 8)
+    add_hl(self.buf, self.ns, 'String', i, 19, -1)
+    add_hl(self.buf, self.ns, 'Keyword', i, 0, 19)
   end
 end
 
@@ -81,28 +79,28 @@ function help:set_lines(picker)
   local lines = {
     ' Keymaps ',
     '',
-    ' ' .. c.mappings.scroll_up .. ' Scroll up',
-    ' ' .. c.mappings.scroll_down .. ' Scroll down',
-    ' ' .. c.mappings.increment .. '       Increment',
-    ' ' .. c.mappings.decrement .. '       Decrement',
-    ' ' .. c.mappings.increment_big .. '       Increment big',
-    ' ' .. c.mappings.decrement_big .. '       Decrement big',
-    ' ' .. c.mappings.increment_bigger .. '   Increment bigger',
-    ' ' .. c.mappings.decrement_bigger .. '   Decrement bigger',
-    ' ' .. c.mappings.min_value .. '       Set to minimum',
-    ' ' .. c.mappings.max_value .. '       Set to maximum',
-    ' ' .. c.mappings.export .. '       Export to other tool',
-    ' ' .. c.mappings.save_to_register_default .. '    Save to register',
-    ' ' .. c.mappings.save_to_register_choose .. '   Pick format and save to register',
-    ' ' .. c.mappings.replace_default .. '  Replace color under cursor',
-    ' ' .. c.mappings.replace_choose .. ' Pick format and replace color',
+    ' Scroll up         ' .. c.mappings.scroll_up .. ' ',
+    ' Scroll down       ' .. c.mappings.scroll_down .. ' ',
+    ' Increment         ' .. c.mappings.increment .. ' ',
+    ' Decrement         ' .. c.mappings.decrement .. ' ',
+    ' Increment big     ' .. c.mappings.increment_big .. ' ',
+    ' Decrement big     ' .. c.mappings.decrement_big .. ' ',
+    ' Increment bigger  ' .. c.mappings.increment_bigger .. ' ',
+    ' Decrement bigger  ' .. c.mappings.decrement_bigger .. ' ',
+    ' Set to minimum    ' .. c.mappings.min_value .. ' ',
+    ' Set to maximum    ' .. c.mappings.max_value .. ' ',
+    ' Export to tool    ' .. c.mappings.export .. ' ',
+    ' Save to register  ' .. c.mappings.save_to_register_default .. ' ',
+    ' Pick -> save      ' .. c.mappings.save_to_register_choose .. ' ',
+    ' Replace color     ' .. c.mappings.replace_default .. ' ',
+    ' Pick -> replace   ' .. c.mappings.replace_choose .. ' ',
   }
 
   if picker then
-    table.insert(lines, 5, ' j       Select next value')
-    table.insert(lines, 6, ' k       Select previous value')
-    table.insert(lines, ' ' .. c.mappings.set_picker_to_white .. '       Set to white')
-    table.insert(lines, ' ' .. c.mappings.set_picker_to_black .. '       Set to black')
+    table.insert(lines, 5, ' Move up           k ')
+    table.insert(lines, 6, ' Move down         j ')
+    table.insert(lines, ' Set to white      ' .. c.mappings.set_picker_to_white)
+    table.insert(lines, ' Set to black      ' .. c.mappings.set_picker_to_black)
   end
 
   set_lines(self.buf, 0, -1, false, lines)
@@ -114,7 +112,7 @@ end
 function help:make_wins(picker)
   local col = (picker and 35) or 52
   local height = 8
-  local width = 42
+  local width = 27
 
   -- make help window
   self.win = open_win(self.buf, false, {

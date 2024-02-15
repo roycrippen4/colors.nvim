@@ -7,13 +7,22 @@ local d = { 'i', 'a', 'o', 'O', 'd', 'D', 'r', 'R', 's', 'S', 'x', 'X', 'c', 'C'
 local colors = {
   ---@type ColorsConfig
   config = {
+    -- Sets the default register for saving a color
     register = '+',
+    -- Shows the color in the Picker/Blending tools
     preview = ' %s ',
+    -- Sets the default format
     default_format = 'hex',
+    -- Default border for windows
     border = 'rounded',
+    -- Enables debug logging
     debug = false,
+    -- Default color used if a color is not found under the cursor
     fallback_color = '#777777',
+    -- Opens the help window when a tool is used
     open_help_by_default = true,
+    -- Tries to replace color first, but will simple insert the color if one is not found
+    insert_by_default = true,
     -- Mappings table
     mappings = {
       -- Disable these keymaps to prevent modification errors in buffer
@@ -73,26 +82,26 @@ colors.picker = function()
 end
 
 colors.list_css = function()
+  logger:log('called css')
   Css.list_colors()
 end
 
 colors.grayscale = function()
+  logger:log('called grayscale')
   local hex_string = make_hex_string(Utils.get_color())
   require('colors.tools').grayscale(hex_string)
 end
 
 colors.lighten = function()
+  logger:log('called lighten')
   local hex_string = make_hex_string(Utils.get_color())
   require('colors.tools').lighten(hex_string)
 end
 
 colors.darken = function()
+  logger:log('called darken')
   local hex_string = make_hex_string(Utils.get_color())
   require('colors.tools').darken(hex_string)
-end
-
-colors.testing = function()
-  logger:log(Utils.get_color_under_cursor())
 end
 
 local function set_highlight_groups()

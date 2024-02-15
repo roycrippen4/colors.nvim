@@ -377,15 +377,20 @@ end
 --- If one can't be found, than it simply inserts it at the cursor position
 ---@param replacement string
 ---@param winnr integer
-function M.replace_under_cursor(replacement, winnr)
+---@param insert_by_default boolean
+function M.replace_under_cursor(replacement, winnr, insert_by_default)
   local cursor = get_cursor(winnr)
   local color_table = M.get_color_under_cursor()
 
   if not color_table then
-    vim.fn.feedkeys(vim.api.nvim_replace_termcodes('p', true, true, true), 'n')
+    if insert_by_default then
+      vim.fn.feedkeys(vim.api.nvim_replace_termcodes('p', true, true, true), 'n')
+      return
+    end
     return
   end
 
+  assert(color_table) -- it was whining, but the nil case is delt with above
   vim.api.nvim_buf_set_text(
     0,
     cursor[1] - 1,

@@ -90,7 +90,7 @@
 ---@field register? string
 ---@field preview? string
 ---@field default_format? Format
----@field replace_by_default? boolean
+---@field insert_by_default? boolean
 ---@field open_help_by_default? boolean
 ---@field fallback_color? string
 ---@field border? string

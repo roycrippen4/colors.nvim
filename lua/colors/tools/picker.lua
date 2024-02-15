@@ -262,7 +262,7 @@ function Picker:replace()
   self:close()
   vim.fn.setreg(config.register, self:format_strings(config.default_format))
   local replacement = self:format_strings(config.default_format)
-  U.replace_under_cursor(replacement, vim.api.nvim_get_current_win())
+  U.replace_under_cursor(replacement, vim.api.nvim_get_current_win(), config.insert_by_default)
 end
 
 --- Replace color under cursor with choosen format
@@ -272,7 +272,7 @@ function Picker:replace_select(winnr)
 
   local callback = function(item)
     item = item:sub(1, 3)
-    U.replace_under_cursor(self:format_strings(item), winnr)
+    U.replace_under_cursor(self:format_strings(item), winnr, config.insert_by_default)
   end
 
   U.select(self:get_select_opts(), 'Choose format', callback)
