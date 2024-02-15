@@ -1,117 +1,183 @@
-<div align="center">
+# 🎨 colors.nvim
 
-# colors.nvim
+**colors.nvim** is a modern color toolbox for Neovim.
 
-</div>
+## ✨ Features
 
-## 🔥 Features 🔥
+- 📦 Manage all color needs with a powerful UI
+- 🧑‍🔬️ Process a color with the Lighten/Darken/Grayscale tools
+- 🔀 Replace the color under the cursor with any supported format
+- 📋 Save your color to the clipboard to paste in later
+- 🖍 Use colors from several popular UI-library palettes
 
-- Color picker
-  - rgb
-  - hex
-  - hsl
-- Lighten/darken colors
-- Grayscale blending
-- Export from any tool to any other tool
-- Replace color under cursor
-- Some utilities for css colors
-  - List Colors
-  - Select a color from the css list (in development)
-  - Convert a css color into rgb, hex, or hsl (in development)
+## ⚡️ Requirements
+
+- Neovim >= **0.9.0**
 
 ## 📦 Installation
 
 Use you favourite package manager and call the setup function.
 
-Packer
+<details>
+    <summary>Lazy</summary>
 
+```lua
+-- This is the configuration I am currently using
+  {
+    'roycrippen4/colors.nvim',
+    keys = {
+      {
+        '<leader>cp',
+        function()
+          require('colors').picker()
+        end,
+        desc = 'Pick a color  ',
+      },
+      {
+        '<leader>cd',
+        function()
+          require('colors').darken()
+        end,
+        desc = 'Darken a color  ',
+      },
+      {
+        '<leader>cl',
+        function()
+          require('colors').lighten()
+        end,
+        desc = 'Lighten a color  ',
+      },
+    },
+    opts = {},
+  },
+}
+```
+
+</details>
+
+<details>
+    <summary>Packer</summary>
+    
 ```lua
 use {
   "roycrippen4/colors.nvim",
-  cmd = "Colors",
   config = function()
     require("colors").setup()
   end,
 }
 ```
+</details>
 
-Lazy
+## ⚙️ Default configuration
 
-```lua
-{
-  "roycrippen4/colors.nvim",
-  event = 'BufReadPost',
-  opts = {}
-},
-```
-
-## ⚙️ Customization
-
-You can change the settings by passing options to the setup function.
-This is the default configuration:
+**colors.nvim** comes with the following default configuration
 
 ```lua
-require("colors").setup({
-    -- Register in which color codes will be copied
-    register = "+",
-    -- Preview for colors, if it contains `%s` this will be replaced with a hex color code of the color
-    preview =  "████████ %s",
-    -- The default in which colors should be saved
-    -- This can be hex, hsl or rgb
-    default_format = "hex",
-    -- Border for the float
-    border = "rounded",
-    -- Some mappings which are used inside the tools
+require('colors').setup({
+  config = {
+    -- Sets the default register for saving a color
+    register = '+',
+    -- Shows the color in the Picker/Blending tools
+    preview = ' %s ',
+    -- Sets the default format
+    default_format = 'hex',
+    -- Default border for windows
+    border = 'rounded',
+    -- Default color used if a color is not found under the cursor
+    fallback_color = '#777777',
+    -- Opens the help window when a tool is used
+    open_help_by_default = true,
+    -- Tries to replace color first, but will simple insert the color if one is not found
+    insert_by_default = true,
+    -- Mappings table
     mappings = {
-        -- increment values
-        increment = "l",
-        -- decrement values
-        decrement = "h",
-        -- increment values with bigger steps
-        increment_big = "L",
-        -- decrement values with bigger steps
-        decrement_big = "H",
-        -- set values to the minimum
-        min_value = "0",
-        -- set values to the maximum
-        max_value = "$",
-        -- save the current color in the register specified above with the format specified above
-        set_register_default_format = "<cr>",
-        -- save the current color in the register specified above with a format you can choose
-        set_register_choose_format = "g<cr>",
-        -- replace the color under the cursor with the current color in the format specified above
-        replace_default_format = "<m-cr>",
-        -- replace the color under the cursor with the current color in a format you can choose
-        replace_choose_format = "g<m-cr>",
-        -- export the current color to a different tool
-        export = "E",
-    }
+      -- Disable these keymaps to prevent modification errors in buffer
+      disable = d,
+      -- Scrolls help window up
+      scroll_up = '<C-S-P>',
+      -- Scrolls help window down
+      scroll_down = '<C-S-N>',
+      -- Increase value
+      increment = 'l',
+      -- Decrease value
+      decrement = 'h',
+      -- Increase value more
+      increment_big = 'L',
+      -- Decrease value more
+      decrement_big = 'H',
+      -- Increase value even more
+      increment_bigger = '<M-L>',
+      -- Decrease value even more
+      decrement_bigger = '<M-H>',
+      -- Set value to miniumum
+      min_value = 'm',
+      -- Set value to maximum
+      max_value = 'M',
+      -- Save the color in default format to the default register
+      save_to_register_default = '<m-cr>',
+      -- Choose a format then save the color default register
+      save_to_register_choose = 'g<cr>',
+      -- Replace color under cursor with default format
+      replace_default = '<cr>',
+      -- Choose a format then replace the color under the cursor
+      replace_choose = 'g<m-cr>',
+      -- Sets R, G, and B values to 00 in the picker
+      set_picker_to_black = 'b',
+      -- Sets R, G, and B values to FF in the picker
+      set_picker_to_white = 'w',
+      -- Export color to another tool
+      export = 'e',
+    },
+  },
 })
 ```
 
-The row on which you are currently is highlighted with `ColortilsCurrentLine`.
-You can modify that to change the way the tools look.
+> Note:
+>
+> colors.nvim only creates keybinds for use inside of the tools.
+>
+> You must create your own keybinds to invoke the tools!
 
 ## 👀 Tools
 
 ### Supported Formats
 
-Supported formats are the following:
+<details>
+    <summary>RGB</summary>
+    
+- `rgb(255, 255, 0)`
+- `rgb(100%, 100%, 0%)`
 
-- `rgb`/`rgba` (both with percentage and absolute values, e.g. `rgb(255, 255, 0)`/`rgb(100%, 100%, 0%, 0.5)`)
-- `hex` (`#FFAB00`)
-- `hsl`/`hsla` (`hsl(60, 100%, 50%)`, `hsla(60, 100%, 50%, 0.4)`)
-- Css color names (only as argument)
+</details>
+
+<details>
+    <summary>Hex</summary>
+    
+- `#FFAB00`
+</details>
+
+<details>
+    <summary>HSL</summary>
+
+- `hsl(60, 100%, 50%)`
+- `hsla(60, 100%, 50%)`
+</details>
+
+<details>
+    <summary>CSS</summary>
+
+##### Color support for the following:
+
+- _Standard CSS_
+- _Tailwind CSS_
+- _Material UI_
+- _ChakraUI_
+
+</details>
 
 ### Usage
 
-You can use the different tools with commands.
-Those take the format `Colortils <tool> <color>`.
-The color can be any of the supported formats.
-Notice that symbols like `#`, `%` and space need to be escaped like e.g. this `\#FF00AB`.
-
-If no valid color is provided as argument the color under the cursor (if available) will be used.
-If there isn't any found the user will be asked for input (notice that you don't need to escape characters there).
+Invoke a tool via a keymap
 
 #### Mappings
 
@@ -130,9 +196,9 @@ You can use `E` to export the currently selected color to a different tool and m
 
 #### Color Picker
 
-`Colortils picker <color>`
-
-<!-- ![picker](https://user-images.githubusercontent.com/81827001/176244717-c4a3d4c5-bb95-4abc-93e0-3733bf87ddb0.png) -->
+```lua
+require('colors').picker()
+```
 
 ##### Saving color
 
@@ -143,33 +209,19 @@ You can use `g<cr>` to get prompted to choose a color format in which the color 
 
 #### Lighten color
 
-`Colortils lighten <color>`
-
-<!-- ![lighten](https://user-images.githubusercontent.com/81827001/176244769-0967873c-8782-4bfb-ba7e-79b2d2a60a54.png) -->
+Lighten a color
 
 #### Darken color
 
-`Colortils darken <color>`
+Darken a color
 
-<!-- ![darken](https://user-images.githubusercontent.com/81827001/176244817-fa21c4c9-9700-4889-a379-5bbddb576234.png) -->
+#### Color to grayscale
 
-#### Color to greyscale
-
-`Colortils greyscale <color>`
-
-<!-- ![greyscale](https://user-images.githubusercontent.com/81827001/176244870-697a7d17-3b06-4bd1-ba07-9a59177096c4.png) -->
-
-#### Pick color on gradient
-
-`Colortils gradient <color1> <color2>`
-
-<!-- ![gradients](https://user-images.githubusercontent.com/81827001/176244977-3831bc86-f3e7-44fc-b4d9-d615d1ae9d16.png) -->
+Make a color more gray
 
 #### List css colors
 
-`Colortils css list`
-
-<!-- ![css_list](https://user-images.githubusercontent.com/81827001/171230907-313fddc8-29e6-4b97-a842-8ea69ed5b6d5.png) -->
+TODO: Document css features
 
 # Other Plugins
 

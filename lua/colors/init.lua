@@ -4,7 +4,7 @@ local Css = require('colors.css')
 
 local d = { 'i', 'a', 'o', 'O', 'd', 'D', 'r', 'R', 's', 'S', 'x', 'X', 'c', 'C', 'K', '/', '?', ':', 'q:', 'q/', 'q?' }
 
-local colors = {
+local M = {
   ---@type ColorsConfig
   config = {
     -- Sets the default register for saving a color
@@ -69,36 +69,36 @@ local colors = {
 ---@return string
 local function make_hex_string(color)
   if not color then
-    return colors.config.fallback_color
+    return M.config.fallback_color
   end
 
   return '#' .. Utils.hex(color.rgb_values[1]) .. Utils.hex(color.rgb_values[2]) .. Utils.hex(color.rgb_values[3])
 end
 
-colors.picker = function()
+M.picker = function()
   local color = Utils.get_color_under_cursor()
   local hex_string = make_hex_string(color)
   require('colors.tools').picker(hex_string)
 end
 
-colors.list_css = function()
+M.list_css = function()
   logger:log('called css')
   Css.list_colors()
 end
 
-colors.grayscale = function()
+M.grayscale = function()
   logger:log('called grayscale')
   local hex_string = make_hex_string(Utils.get_color())
   require('colors.tools').grayscale(hex_string)
 end
 
-colors.lighten = function()
+M.lighten = function()
   logger:log('called lighten')
   local hex_string = make_hex_string(Utils.get_color())
   require('colors.tools').lighten(hex_string)
 end
 
-colors.darken = function()
+M.darken = function()
   logger:log('called darken')
   local hex_string = make_hex_string(Utils.get_color())
   require('colors.tools').darken(hex_string)
@@ -112,16 +112,18 @@ end
 
 --- Main setup function
 ---@param update? table
-function colors.setup(update)
-  local new_config = vim.tbl_deep_extend('force', colors.config, update or {})
-  colors.config = new_config
+function M.setup(update)
+  local new_config = vim.tbl_deep_extend('force', M.config, update or {})
+  M.config = new_config
   set_highlight_groups()
 
-  if colors.config.debug then
+  vim.cmd.ColorPicker = M.picker()
+
+  if M.config.debug then
     vim.schedule(function()
       logger:show()
     end)
   end
 end
 
-return colors
+return M

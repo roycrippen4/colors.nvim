@@ -1,6 +1,8 @@
 -- BUG: Fix replacing a color in a different format.
 -- Currently getting an `invalid winnr` error.
 
+-- TODO: Finish fixing up the help window
+
 -- TODO: Overhaul current css implementation
 -- Should be able to replace any color under cursor with either css value or css name.
 -- If replacing with css value then it should be in any format offered
