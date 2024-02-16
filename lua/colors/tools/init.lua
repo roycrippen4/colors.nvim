@@ -20,12 +20,6 @@ function M.grayscale(color)
   Blender:blend(color, gray)
 end
 
----@param color1? string
----@param color2? string
-function M.blend(color1, color2)
-  Blender:blend(color1, color2)
-end
-
 ---@param hex_string string
 ---@return string
 function M.picker(hex_string)

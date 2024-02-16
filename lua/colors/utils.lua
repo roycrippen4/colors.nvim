@@ -427,10 +427,11 @@ function M.validate_rgb(r, g, b)
   return r and g and b and r <= 255 and g <= 255 and b <= 255 and r >= 0 and g >= 0 and b >= 0
 end
 
----@param color string
+---@param hex_string string
 ---@param kind 'hex'|'rgb'|'hsl'
-function M.format_strings(color, kind)
-  local red, green, blue = M.get_rgb_values(color)
+---@return string
+function M.format_strings(hex_string, kind)
+  local red, green, blue = M.get_rgb_values(hex_string)
 
   if kind == 'hsl' then
     local h, s, l = unpack(M.rgb_to_hsl(red, green, blue))
@@ -441,7 +442,7 @@ function M.format_strings(color, kind)
     return 'rgb(' .. red .. ', ' .. green .. ', ' .. blue .. ')'
   end
 
-  return color
+  return hex_string
 end
 
 ---@param disable string|string[]

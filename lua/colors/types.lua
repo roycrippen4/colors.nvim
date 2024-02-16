@@ -25,7 +25,6 @@
 ---@field create_autocmds function
 ---@field cur_pos table
 ---@field export function
----@field format_strings function
 ---@field get_select_opts function
 ---@field green number
 ---@field init function
@@ -44,6 +43,7 @@
 ---@field set_to_white_or_black function
 ---@field update function
 ---@field update_highlights function
+---@field current string
 
 ---@class Colors
 ---@field first_color string

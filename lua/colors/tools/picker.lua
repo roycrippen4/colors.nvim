@@ -149,26 +149,16 @@ function Picker:set_to_white_or_black(bufnr, winnr, black)
   self:set_color_value(255, bufnr, winnr, 3)
 end
 
----@param kind? 'hex'|'rgb'|'hsl'
----@return string
-function Picker:format_strings(kind)
-  if kind == 'hsl' then
-    local h, s, l = unpack(U.rgb_to_hsl(self.red, self.green, self.blue))
-    return 'hsl(' .. h .. ', ' .. s .. '%, ' .. l .. '%)'
-  end
-
-  if kind == 'rgb' then
-    return 'rgb(' .. self.red .. ', ' .. self.green .. ', ' .. self.blue .. ')'
-  end
-
+function Picker:make_hex_string()
   return '#' .. U.hex(self.red) .. U.hex(self.green) .. U.hex(self.blue)
 end
 
 function Picker:get_select_opts()
+  local hex_string = self:make_hex_string()
   return {
-    'hex: ' .. self:format_strings('hex'),
-    'rgb: ' .. self:format_strings('rgb'),
-    'hsl: ' .. self:format_strings('hsl'),
+    'hex: ' .. U.format_strings(hex_string, 'hex'),
+    'rgb: ' .. U.format_strings(hex_string, 'rgb'),
+    'hsl: ' .. U.format_strings(hex_string, 'hsl'),
   }
 end
 
@@ -195,9 +185,9 @@ function Picker:set_picker_lines(bufnr, winnr)
   local preview = string.rep(' ', get_width(winnr) - #hex_str) .. hex_str
 
   local lines = {
-    ' Red:     ' .. U.hex(self.red) .. ' ' .. get_bar(self.red, 255, 20),
-    ' Green:   ' .. U.hex(self.green) .. ' ' .. get_bar(self.green, 255, 20),
-    ' Blue:    ' .. U.hex(self.blue) .. ' ' .. get_bar(self.blue, 255, 20),
+    ' Red:     ' .. r_str .. ' ' .. get_bar(self.red, 255, 20),
+    ' Green:   ' .. g_str .. ' ' .. get_bar(self.green, 255, 20),
+    ' Blue:    ' .. b_str .. ' ' .. get_bar(self.blue, 255, 20),
     '',
     preview,
   }
@@ -245,7 +235,7 @@ function Picker:confirm_select()
 
   local callback = function(item)
     item = item:sub(1, 3)
-    vim.fn.setreg(config.register, self:format_strings(item))
+    vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), item))
   end
 
   U.select(self:get_select_opts(), 'Choose format', callback)
@@ -254,14 +244,14 @@ end
 --- Confirm color and save with default format
 function Picker:confirm()
   self:close()
-  vim.fn.setreg(config.register, self:format_strings(config.default_format))
+  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.default_format))
 end
 
 --- Replace color under cursor with default format
 function Picker:replace()
   self:close()
-  vim.fn.setreg(config.register, self:format_strings(config.default_format))
-  local replacement = self:format_strings(config.default_format)
+  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.default_format))
+  local replacement = U.format_strings(self:make_hex_string(), config.default_format)
   U.replace_under_cursor(replacement, vim.api.nvim_get_current_win(), config.insert_by_default)
 end
 
@@ -272,7 +262,7 @@ function Picker:replace_select(winnr)
 
   local callback = function(item)
     item = item:sub(1, 3)
-    U.replace_under_cursor(self:format_strings(item), winnr, config.insert_by_default)
+    U.replace_under_cursor(U.format_strings(self:make_hex_string(), item), winnr, config.insert_by_default)
   end
 
   U.select(self:get_select_opts(), 'Choose format', callback)
@@ -312,7 +302,7 @@ function Picker:set_color_value(color_value, bufnr, winnr, idx)
 end
 
 function Picker:export()
-  local opts = { 'blend', 'grayscale', 'lighten', 'darken' }
+  local opts = { 'grayscale', 'lighten', 'darken' }
   local function callback(tool)
     local hex_color = '#' .. U.hex(self.red) .. U.hex(self.green) .. U.hex(self.blue)
     require('colors.tools')[tool](hex_color)
@@ -349,13 +339,12 @@ function Picker:pick(hex_string)
     UI.help:open(true)
   end
 
+  self:update(UI.main.buf, UI.main.win)
   self:set_keymaps(UI.main.buf, UI.main.win)
   self:create_autocmds()
   set_option('cursorline', true, { win = UI.main.win })
 
   self:update(UI.main.buf, UI.main.win)
-  local new_color = self:format_strings()
-  return new_color
 end
 
 function Picker:create_autocmds()
@@ -391,8 +380,10 @@ function Picker:create_autocmds()
   autocmd('BufEnter', {
     group = PickerGroup,
     callback = function()
-      vim.go.guicursor = _gui_cursor
-      self:close()
+      if vim.bo.ft ~= 'Colors' then
+        vim.go.guicursor = _gui_cursor
+        self:close()
+      end
     end,
   })
 end

@@ -1,6 +1,7 @@
 local logger = require('colors.logger')
 local Utils = require('colors.utils')
 local Css = require('colors.css')
+logger:show()
 
 local d = { 'i', 'a', 'o', 'O', 'd', 'D', 'r', 'R', 's', 'S', 'x', 'X', 'c', 'C', 'K', '/', '?', ':', 'q:', 'q/', 'q?' }
 
@@ -16,13 +17,13 @@ local M = {
     -- Default border for windows
     border = 'rounded',
     -- Enables debug logging
-    debug = false,
+    debug = true,
     -- Default color used if a color is not found under the cursor
     fallback_color = '#777777',
     -- Opens the help window when a tool is used
     open_help_by_default = true,
     -- Tries to replace color first, but will simple insert the color if one is not found
-    insert_by_default = true,
+    insert_by_default = false,
     -- Mappings table
     mappings = {
       -- Disable these keymaps to prevent modification errors in buffer
@@ -82,25 +83,24 @@ M.picker = function()
 end
 
 M.list_css = function()
-  logger:log('called css')
   Css.list_colors()
 end
 
 M.grayscale = function()
-  logger:log('called grayscale')
-  local hex_string = make_hex_string(Utils.get_color())
+  local color = Utils.get_color_under_cursor()
+  local hex_string = make_hex_string(color)
   require('colors.tools').grayscale(hex_string)
 end
 
 M.lighten = function()
-  logger:log('called lighten')
-  local hex_string = make_hex_string(Utils.get_color())
+  local color = Utils.get_color_under_cursor()
+  local hex_string = make_hex_string(color)
   require('colors.tools').lighten(hex_string)
 end
 
 M.darken = function()
-  logger:log('called darken')
-  local hex_string = make_hex_string(Utils.get_color())
+  local color = Utils.get_color_under_cursor()
+  local hex_string = make_hex_string(color)
   require('colors.tools').darken(hex_string)
 end
 
@@ -116,14 +116,6 @@ function M.setup(update)
   local new_config = vim.tbl_deep_extend('force', M.config, update or {})
   M.config = new_config
   set_highlight_groups()
-
-  vim.cmd.ColorPicker = M.picker()
-
-  if M.config.debug then
-    vim.schedule(function()
-      logger:show()
-    end)
-  end
 end
 
 return M

@@ -9,7 +9,7 @@ local set_lines = api.nvim_buf_set_lines
 local set_option = api.nvim_set_option_value
 local win_close = api.nvim_win_close
 local c = require('colors').config
-local logger = require('colors.logger')
+-- local logger = require('colors.logger')
 
 local main = {} ---@class MainUI
 local help = {} ---@class HelpUI
