@@ -7,7 +7,9 @@ local d = { 'i', 'a', 'o', 'O', 'd', 'D', 'r', 'R', 's', 'S', 'x', 'X', 'c', 'C'
 local M = {
   ---@type ColorsConfig
   config = {
-    -- Sets the default register for saving a color
+    -- Sets the default list of css colors to choose from
+    default_css_list = 'mui',
+    -- Sets the default register for saving a color,
     register = '+',
     -- Shows the color in the Picker/Blending tools
     preview = ' %s ',
@@ -81,9 +83,9 @@ M.picker = function()
   require('colors.tools').picker(hex_string)
 end
 
--- M.list_css = function()
---   Css.list_colors()
--- end
+M.list = function()
+  require('colors.tools').list_default()
+end
 
 M.grayscale = function()
   local color = Utils.get_color_under_cursor()
@@ -101,10 +103,6 @@ M.darken = function()
   local color = Utils.get_color_under_cursor()
   local hex_string = make_hex_string(color)
   require('colors.tools').darken(hex_string)
-end
-
-M.test = function()
-  require('colors.tools').css()
 end
 
 local function set_highlight_groups()

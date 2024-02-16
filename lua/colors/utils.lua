@@ -459,4 +459,33 @@ function M.disable_keymaps(disable)
   end
 end
 
+--[[==========================================================================]]
+--[[================================ CSS =====================================]]
+--[[==========================================================================]]
+
+--- Gets the colors formatted as a table of string
+---@param list_name ColorListName
+---@return table|nil "color strings"
+function M.get_formated_colors(list_name)
+  local list_str = 'colors.tools.css.lists.' .. list_name
+
+  logger:log(list_name)
+  logger:log(list_str)
+  ---@type boolean, ColorListItem[]
+  local ok, list = pcall(require, list_str)
+  if not ok then
+    vim.notify('Unable to find that list. Make sure you are using one of the avaliable list names')
+    return
+  end
+
+  local lines = {}
+  for _, color in ipairs(list) do
+    table.insert(
+      lines,
+      string.upper(color[1]:sub(1, 1)) .. color[1]:sub(2, -1) .. ':' .. string.rep(' ', 21 - #color[1]) .. color[2]
+    )
+  end
+  return lines
+end
+
 return M

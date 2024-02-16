@@ -96,6 +96,7 @@
 ---@field border? string
 ---@field debug? boolean
 ---@field mappings? ColorsMappings
+---@field default_css_list? 'mui'|'chakra'|'tailwind'|'base'
 
 ---@class ColorTable
 ---@field start_pos integer
@@ -108,9 +109,10 @@
 ---@field list ColorListItem[]
 
 ---@alias Format
----|"rgb"
----|"hsl"
----|"hex"
+---|'rgb'
+---|'hsl'
+---|'hex'
 
 ---@alias RGB { [1]: integer, [2]: integer, [3]: integer }
 ---@alias ColorListItem { [1]: string, [2]: string }
+---@alias ColorListName 'base'|'chakra'|'mui'|'tailwind'

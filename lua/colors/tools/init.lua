@@ -1,13 +1,13 @@
 local Utils = require('colors.utils')
 local Blender = require('colors.tools.blender')
 local Picker = require('colors.tools.picker')
--- local Css = require('colors.tools.css')
+local Css = require('colors.tools.css')
 
 local M = {}
 
--- function M.css()
--- Css:test()
--- end
+function M.list_default()
+  Css.list_colors()
+end
 
 ---@param color string
 function M.lighten(color)
