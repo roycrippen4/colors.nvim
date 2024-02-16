@@ -2,6 +2,10 @@
 
 **colors.nvim** is a modern color toolbox for Neovim.
 
+> NOTE: This plugin is currently in **_heavy_**, **_active_** development.
+>
+> There are **NO** guarantees that it will work properly or as advertised!
+
 ## ✨ Features
 
 - 📦 Manage all color needs with a powerful UI
@@ -238,4 +242,4 @@ Check out these other color-focused plugins for Neovim
 ## Credits
 
 Massive credit to max and his project [colortils.nvim](https://github.com/nvim-colortils/colortils.nvim).
-This plugin is an heavily modified fork of his project.
+This plugin is a heavily modified fork of his project.
