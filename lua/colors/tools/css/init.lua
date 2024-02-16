@@ -29,6 +29,21 @@ local CSS = {}
 --   return nil
 -- end
 
+---@param list_name string
+---@return ColorListItem[]|nil
+function CSS:get_css_color_table(list_name)
+  local list_path = 'colors.tools.css.lists.' .. list_name
+
+  ---@type boolean, ColorListItem[]
+  local ok, color_table = pcall(require, list_path)
+  if not ok then
+    vim.notify('Unable to get the color table!')
+    return
+  end
+
+  return color_table
+end
+
 ---@return string
 local function get_color_from_list()
   local win = get_win()
@@ -153,7 +168,9 @@ end
 function CSS:list(list_name)
   self.prev_win = api.nvim_get_current_win()
   local list = get_list(list_name)
+
   if not list then
+    vim.notify('colors.css.list(): Could not get that list! Sorry!')
     return
   end
 

@@ -96,8 +96,7 @@
 ---@field border? string
 ---@field debug? boolean
 ---@field mappings? ColorsMappings
----@field default_css_list? 'mui'|'chakra'|'tailwind'|'base'
----@field use_color_name_by_default? boolean
+---@field css ColorsCssConfig
 
 ---@class ColorTable
 ---@field start_pos integer
@@ -108,6 +107,24 @@
 
 ---@class ColorList
 ---@field list ColorListItem[]
+
+-- css specific configuration
+---@class ColorsCssConfig
+-- Sets the default list of css colors to choose from
+---@field default_css_list? 'mui'|'chakra'|'tailwind'|'base'
+-- True uses the css color name by default. False gets associated hex value
+---@field use_color_name_by_default? boolean,
+-- Telescope config options
+---@field use_telescope? boolean
+
+--- Configuration for telescope extension
+---@class ColorsExtConfig
+--- Replaces the color under the cursor on selection by default
+---@field replace_by_default? boolean
+--- Use css color names by default. False uses hex
+---@field names_by_default? boolean
+--- Do not call!
+---@field __setup function
 
 ---@alias Format
 ---|'rgb'

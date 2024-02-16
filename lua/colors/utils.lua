@@ -88,7 +88,7 @@ end
 --- Gets the values of a hex color
 ---@param hex_string string "#xxxxxx"
 ---@return number, number, number "red,green,blue"
-function M.get_rgb_values(hex_string)
+function M.hex_to_rgb(hex_string)
   local red = tonumber(hex_string:sub(2, 3), 16)
   local green = tonumber(hex_string:sub(4, 5), 16)
   local blue = tonumber(hex_string:sub(6, 7), 16)
@@ -106,12 +106,12 @@ function M.get_gradient(start_color, end_color, length)
     points = 0
   end
 
-  local start_red, start_green, start_blue = M.get_rgb_values(start_color)
+  local start_red, start_green, start_blue = M.hex_to_rgb(start_color)
   if not start_red or not start_green or not start_blue then
     return
   end
 
-  local end_red, end_green, end_blue = M.get_rgb_values(end_color)
+  local end_red, end_green, end_blue = M.hex_to_rgb(end_color)
   if not end_red or not end_green or not end_blue then
     return
   end
@@ -137,7 +137,7 @@ end
 ---@param color string "#xxxxxx"
 ---@return string color
 function M.get_gray(color)
-  local red, green, blue = M.get_rgb_values(color)
+  local red, green, blue = M.hex_to_rgb(color)
   local amount = red * 0.2126 + green * 0.7152 + blue * 0.0722
   local single_hex = M.hex(M.round_float(amount))
   return '#' .. string.rep(single_hex, 3)
@@ -147,7 +147,7 @@ end
 ---@param color string "#xxxxxx"
 ---@return string color
 function M.complementary(color)
-  local Xred, Xgreen, Xblue = M.get_rgb_values(color)
+  local Xred, Xgreen, Xblue = M.hex_to_rgb(color)
   local red = M.hex(255 - Xred)
   local green = M.hex(255 - Xgreen)
   local blue = M.hex(255 - Xblue)
@@ -431,7 +431,7 @@ end
 ---@param kind 'hex'|'rgb'|'hsl'
 ---@return string
 function M.format_strings(hex_string, kind)
-  local red, green, blue = M.get_rgb_values(hex_string)
+  local red, green, blue = M.hex_to_rgb(hex_string)
 
   if kind == 'hsl' then
     local h, s, l = unpack(M.rgb_to_hsl(red, green, blue))
@@ -486,6 +486,40 @@ function M.get_formated_colors(list_name)
     )
   end
   return lines
+end
+
+--- Preprocess the RGB color values according to the sRGB color space
+--- as part of calculating the relative luminance of the color
+---@param color number
+---@return number
+function M.normalize_rgb_value(color)
+  color = color / 255.0
+  if color <= 0.03928 then
+    return color / 12.92
+  end
+
+  return ((color + 0.055) / 1.055) ^ 2.4
+end
+
+--- Converts hexidecimal string into a luminance value
+---@param hex_string string
+function M.hex_to_luminance(hex_string)
+  local r, g, b = M.hex_to_rgb(hex_string)
+  r, g, b = M.normalize_rgb_value(r), M.normalize_rgb_value(g), M.normalize_rgb_value(b)
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+end
+
+--- Returns the 'white' or 'black' for a given background color.
+---@param hex_string string
+---@return 'white'|'black'
+function M.get_fg_color(hex_string)
+  local lum = M.hex_to_luminance(hex_string)
+
+  if lum > 0.179 then
+    return 'black'
+  end
+
+  return 'white'
 end
 
 return M

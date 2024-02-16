@@ -317,7 +317,7 @@ function Picker:init(hex_string)
   self.ns_g = create_ns('ColorsPickerGreen')
   self.ns_b = create_ns('ColorsPickerBlue')
   self.cur_pos = { 1, 0 }
-  self.red, self.green, self.blue = U.get_rgb_values(hex_string)
+  self.red, self.green, self.blue = U.hex_to_rgb(hex_string)
   self.prev_win = api.nvim_get_current_win()
 end
 

@@ -7,8 +7,16 @@ local d = { 'i', 'a', 'o', 'O', 'd', 'D', 'r', 'R', 's', 'S', 'x', 'X', 'c', 'C'
 local M = {
   ---@type ColorsConfig
   config = {
-    -- Sets the default list of css colors to choose from
-    default_css_list = 'mui',
+    -- css specific configuration
+    ---@type ColorsCssConfig
+    css = {
+      -- Sets the default list of css colors to choose from
+      default_css_list = 'mui',
+      -- True uses the css color name by default. False gets associated hex value
+      use_color_name_by_default = false,
+      -- Telescope config options
+      use_telescope = true,
+    },
     -- Sets the default register for saving a color,
     register = '+',
     -- Shows the color in the Picker/Blending tools
@@ -19,8 +27,6 @@ local M = {
     border = 'rounded',
     -- Enables debug logging
     debug = true,
-    -- True uses the css color name by default. False gets associated hex value
-    use_color_name_by_default = false,
     -- Default color used if a color is not found under the cursor
     fallback_color = '#777777',
     -- Opens the help window when a tool is used
@@ -85,8 +91,23 @@ M.picker = function()
   require('colors.tools').picker(hex_string)
 end
 
-M.list = function()
-  require('colors.tools').show_list()
+---@param list_name? ColorListName
+M.list = function(list_name)
+  if not list_name then
+    list_name = M.config.css.default_css_list
+    assert(list_name)
+  end
+  require('colors.tools').show_list(list_name)
+end
+
+---@param list_name? ColorListName
+M.get_color_table = function(list_name)
+  if not list_name then
+    list_name = M.config.css.default_css_list
+    assert(list_name)
+  end
+
+  return require('colors.tools').get_css_color_table(list_name)
 end
 
 M.grayscale = function()

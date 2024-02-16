@@ -10,6 +10,12 @@ function M.show_list(list_name)
   Css:list(list_name)
 end
 
+---@param list_name ColorListName
+---@return ColorListItem[]|nil
+function M.get_css_color_table(list_name)
+  return Css:get_css_color_table(list_name)
+end
+
 ---@param color string
 function M.lighten(color)
   Blender:blend(color, '#FFFFFF')

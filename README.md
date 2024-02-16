@@ -5,6 +5,10 @@
 > NOTE: This plugin is currently in **_heavy_**, **_active_** development.
 >
 > There are **NO** guarantees that it will work properly or as advertised!
+>
+> I am using github for personal storage at the moment!
+>
+> This plugin should be considered pre-alpha if anything!
 
 ## ✨ Features
 
