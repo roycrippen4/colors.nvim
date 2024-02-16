@@ -157,7 +157,7 @@ function B:update(bufnr, winnr)
   local c_strs = U.format_strings(self.colors.gradient[self.idx], config.default_format)
   local preview = string.format(config.preview, c_strs)
   local lines = string.rep(' ', get_width(winnr) - #preview) .. preview
-  local marker = string.rep(' ', math.floor(self.idx / 5) - 1) .. '^'
+  local marker = string.rep(' ', math.floor(self.idx / 5) - 1) .. ''
 
   set_lines(bufnr, 1, -1, false, { marker })
   set_lines(bufnr, 2, 3, false, { lines })

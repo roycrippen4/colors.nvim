@@ -104,11 +104,13 @@
 ---@field rgb_values RGB
 ---@field type Format
 
+---@class ColorList
+---@field list ColorListItem[]
+
 ---@alias Format
 ---|"rgb"
 ---|"hsl"
 ---|"hex"
 
-----|"hex_6"
-
 ---@alias RGB { [1]: integer, [2]: integer, [3]: integer }
+---@alias ColorListItem { [1]: string, [2]: string }
