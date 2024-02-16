@@ -97,6 +97,7 @@
 ---@field debug? boolean
 ---@field mappings? ColorsMappings
 ---@field default_css_list? 'mui'|'chakra'|'tailwind'|'base'
+---@field use_color_name_by_default? boolean
 
 ---@class ColorTable
 ---@field start_pos integer

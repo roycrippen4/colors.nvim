@@ -465,7 +465,7 @@ end
 
 --- Gets the colors formatted as a table of string
 ---@param list_name ColorListName
----@return table|nil "color strings"
+---@return string[]|nil "color strings"
 function M.get_formated_colors(list_name)
   local list_str = 'colors.tools.css.lists.' .. list_name
 

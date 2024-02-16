@@ -19,6 +19,8 @@ local M = {
     border = 'rounded',
     -- Enables debug logging
     debug = true,
+    -- True uses the css color name by default. False gets associated hex value
+    use_color_name_by_default = false,
     -- Default color used if a color is not found under the cursor
     fallback_color = '#777777',
     -- Opens the help window when a tool is used
@@ -84,7 +86,7 @@ M.picker = function()
 end
 
 M.list = function()
-  require('colors.tools').list_default()
+  require('colors.tools').show_list()
 end
 
 M.grayscale = function()

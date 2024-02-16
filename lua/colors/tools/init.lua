@@ -5,8 +5,9 @@ local Css = require('colors.tools.css')
 
 local M = {}
 
-function M.list_default()
-  Css.list_colors()
+---@param list_name ColorListName
+function M.show_list(list_name)
+  Css:list(list_name)
 end
 
 ---@param color string

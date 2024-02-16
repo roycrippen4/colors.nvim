@@ -1,12 +1,14 @@
 local api = vim.api
 local add_hl = api.nvim_buf_add_highlight
 local autocmd = api.nvim_create_autocmd
+local augroup = api.nvim_create_augroup
 local buf_delete = api.nvim_buf_delete
 local create_buf = api.nvim_create_buf
 local create_ns = api.nvim_create_namespace
 local open_win = api.nvim_open_win
 local set_lines = api.nvim_buf_set_lines
 local set_option = api.nvim_set_option_value
+local map = vim.keymap.set
 local win_close = api.nvim_win_close
 local c = require('colors').config
 -- local logger = require('colors.logger')
@@ -53,8 +55,7 @@ function help:add_hl(len)
   end
 end
 
------ -@param picker? boolean
-function help:update_scrollbar(--[[ picker ]])
+function help:update_scrollbar()
   local scrollbar_lines = {
     { '█', '', '', '', '', '', '', '' },
     { '█', '█', '', '', '', '', '', '' },
@@ -75,7 +76,8 @@ function help:update_scrollbar(--[[ picker ]])
 end
 
 ---@param picker? boolean
-function help:set_lines(picker)
+---@param css? boolean
+function help:set_lines(picker, css)
   local lines = {
     ' Keymaps ',
     '',
@@ -103,15 +105,22 @@ function help:set_lines(picker)
     table.insert(lines, ' Set to black      ' .. c.mappings.set_picker_to_black)
   end
 
+  if css then
+    -- TODO: These need to be actual keybinds
+    table.insert(lines, ' Set to white      ' .. c.mappings.set_picker_to_white)
+    table.insert(lines, ' Set to black      ' .. c.mappings.set_picker_to_black)
+  end
+
   set_lines(self.buf, 0, -1, false, lines)
   self:update_scrollbar()
   self:add_hl(#lines)
 end
 
 ---@param picker? boolean
-function help:make_wins(picker)
+---@param css? boolean
+function help:make_wins(picker, css)
   local col = (picker and 35) or 52
-  local height = 8
+  local height = (css and 15) or 8
   local width = 27
 
   -- make help window
@@ -156,7 +165,7 @@ function help:close()
 end
 
 function help:set_keymaps()
-  vim.keymap.set('n', c.mappings.scroll_down, function()
+  map('n', c.mappings.scroll_down, function()
     vim.fn.win_execute(self.win, 'normal! 2j zt')
 
     if self.bar_pos < 9 then
@@ -165,7 +174,7 @@ function help:set_keymaps()
     end
   end, { buffer = true })
 
-  vim.keymap.set('n', c.mappings.scroll_up, function()
+  map('n', c.mappings.scroll_up, function()
     if self.bar_pos >= 2 then
       self.bar_pos = self.bar_pos - 1
       self:update_scrollbar()
@@ -175,18 +184,19 @@ function help:set_keymaps()
 end
 
 ---@param picker? boolean
-function help:open(picker)
+---@param css? boolean
+function help:open(picker, css)
   if self.is_open then
     self:close()
     return
   end
   self:init()
-  self:make_wins(picker)
-  self:set_lines(picker)
+  self:make_wins(picker, css)
+  self:set_lines(picker, css)
   self:set_keymaps()
 
   autocmd('WinClosed', {
-    group = vim.api.nvim_create_augroup('CloseUI', { clear = true }),
+    group = augroup('CloseUI', { clear = true }),
     pattern = tostring(self.win),
     callback = function()
       self.is_open = false
