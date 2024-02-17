@@ -45,7 +45,7 @@
 ---@field update_highlights function
 ---@field current string
 
----@class Colors
+---@class BlenderColors
 ---@field first_color string
 ---@field second_color string
 ---@field gradient table|nil

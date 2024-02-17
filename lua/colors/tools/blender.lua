@@ -207,7 +207,7 @@ function B:init(color1, color2)
   self.idx = 1
   self.cur_pos = { 1, 0 }
   self.ns = create_ns('ColorsGradient')
-  ---@type Colors
+  ---@type BlenderColors
   self.colors = {
     first_color = color1,
     second_color = color2,

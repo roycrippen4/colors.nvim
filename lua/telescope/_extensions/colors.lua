@@ -100,7 +100,7 @@ local function css_list_picker_callback(choice)
 
   make_highlights(color_list)
 
-  pickers.new(theme['[get_' .. _config.telescope_theme](), defaults(color_list)):find()
+  pickers.new(theme['get_' .. _config.telescope_theme](), defaults(color_list)):find()
 end
 
 --- Shows lists with vim.ui.select() and opens the choice in the telescope picker

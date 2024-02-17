@@ -16,7 +16,7 @@ local M = {
       use_color_name_by_default = false,
       -- Configuration for telescope
       telescope_config = {
-        telescope_theme = 'ivy',
+        telescope_theme = 'dropdown',
         select_behavior = 'replace',
         fallback_behavior = 'save',
         use_names = true,

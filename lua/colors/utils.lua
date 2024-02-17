@@ -1,6 +1,6 @@
 local api = vim.api
 local get_lines = api.nvim_buf_get_lines
-local get_buf = api.nvim_win_get_buf
+-- local get_buf = api.nvim_win_get_buf
 local get_cursor = api.nvim_win_get_cursor
 local map = vim.keymap.set
 local logger = require('colors.logger')
@@ -251,11 +251,38 @@ function M.hsl_to_rgb(h, s, l)
   }
 end
 
+---@param css_table ColorListItem[]
+---@return { [string]: string }[]
+local function convert_color_table(css_table)
+  local color_name_as_key = {}
+  for _, pair in ipairs(css_table) do
+    local key, value = pair[1], pair[2]
+    color_name_as_key[key] = value
+  end
+  return color_name_as_key
+end
+
+local css_base = convert_color_table(require('colors.tools.css.lists.base'))
+
 ---@param  line string
 ---@param  column integer
 ---@return ColorTable|nil
 function M.get_color_table(line, column)
   local formats = {
+    {
+      get_rgb_table = function(match)
+        local hex = css_base[match:lower()]
+        if not hex then
+          return
+        end -- Handle case where match is not a known color name
+        local r = tonumber(hex:sub(2, 3), 16)
+        local g = tonumber(hex:sub(4, 5), 16)
+        local b = tonumber(hex:sub(6, 7), 16)
+        return { r, g, b }
+      end,
+      type = 'css_base',
+      pattern = '\\b(' .. table.concat(vim.tbl_keys(css_base), '|') .. ')\\b',
+    },
     {
       get_rgb_table = function(match)
         local r = tonumber(match:sub(2, 2) .. match:sub(2, 2), 16)
@@ -270,10 +297,10 @@ function M.get_color_table(line, column)
       ---@param match string
       ---@return RGB
       get_rgb_table = function(match)
-        local red = tonumber(match:sub(2, 3), 16)
-        local green = tonumber(match:sub(4, 5), 16)
-        local blue = tonumber(match:sub(6, 7), 16)
-        return { red, green, blue }
+        local r = tonumber(match:sub(2, 3), 16)
+        local g = tonumber(match:sub(4, 5), 16)
+        local b = tonumber(match:sub(6, 7), 16)
+        return { r, g, b }
       end,
       type = 'hex_6',
       pattern = '#%x%x%x%x%x%x',
