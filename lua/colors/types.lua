@@ -90,7 +90,7 @@
 ---@field register? string
 ---@field preview? string
 ---@field default_format? Format
----@field insert_by_default? boolean
+---@field default_insert? boolean
 ---@field open_help_by_default? boolean
 ---@field fallback_color? string
 ---@field border? string
@@ -105,9 +105,6 @@
 ---@field rgb_values RGB
 ---@field type Format
 
----@class ColorList
----@field list ColorListItem[]
-
 -- css specific configuration
 ---@class ColorsCssConfig
 -- Sets the default list of css colors to choose from
@@ -118,13 +115,49 @@
 ---@field use_telescope? boolean
 
 --- Configuration for telescope extension
----@class ColorsExtConfig
---- Replaces the color under the cursor on selection by default
----@field replace_by_default? boolean
---- Use css color names by default. False uses hex
----@field names_by_default? boolean
---- Do not call!
----@field __setup function
+---
+--- **Default configuration**
+--- ```lua
+--- -- other telescope config settings...
+--- extensions = {
+---   colors = {
+---     select_behavior = 'replace',
+---     fallback_behavior = 'save',
+---     use_names = true,
+---     always_save = true
+---   }
+--- }
+--- ```
+---
+--- @class ColorsExtConfig
+---  Sets the behavior of the picker when a color is selected.
+---  `replace` - Replaces the color under the cursor
+---  `insert` - Inserts the color at the cursor
+---  `save` - Saves the color in the default register
+---
+---  ---
+---  __Default:__ `replace`
+--- @field select_behavior? 'replace'|'insert'|'save'
+---  `True` uses css color names by default. `False` uses hex values.
+---
+---  ---
+---  __Default:__ `True`
+--- @field use_names? boolean
+---
+---  `True` always saves the selected color the default register
+---
+---  ---
+---  __Default:__ `True`
+--- @field always_save? boolean
+---
+--- Defines the behavior in the event of a failure.
+--- Typically used with `select_behavior` = "replace".
+--- If a color is not found under the cursor,
+--- then the plugin will either `save` or `insert` based on this parameter.
+---
+---  ---
+---  __Default:__ `save`
+--- @field fallback_behavior? 'insert'|'save'
 
 ---@alias Format
 ---|'rgb'

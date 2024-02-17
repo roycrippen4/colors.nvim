@@ -28,14 +28,14 @@ function B:replace()
   self:close()
   local str = U.format_strings(self.colors.gradient[self.idx], config.default_format)
   vim.fn.setreg(config.register, str)
-  U.replace_under_cursor(str, get_win(), config.insert_by_default)
+  U.replace_under_cursor(str, get_win(), config.default_insert)
 end
 
 function B:replace_choose()
   self:close()
   local callback = function(item)
     local str = U.format_strings(self.colors.gradient[self.idx], item:sub(1, 3))
-    U.replace_under_cursor(str, get_win(), config.insert_by_default)
+    U.replace_under_cursor(str, get_win(), config.default_insert)
   end
 
   local format_opts = {

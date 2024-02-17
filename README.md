@@ -4,11 +4,18 @@
 
 > NOTE: This plugin is currently in **_heavy_**, **_active_** development.
 >
-> There are **NO** guarantees that it will work properly or as advertised!
+> There are **NO** guarantees that it will work properly or as advertised
 >
-> I am using github for personal storage at the moment!
+> I am using github for personal storage at the moment
 >
-> This plugin should be considered pre-alpha if anything!
+> This plugin should be considered pre-alpha if anything
+>
+> I am maintaining a TODO list
+> See [todo.lua](https://github.com/roycrippen4/colors.nvim/todo.lua) if you are curious about the progress and future plans
+>
+> Please do not leave issues at this time, as they will be ignored!
+>
+> As stated above, this plugin is currently in **_heavy_**, **_active_** development
 
 ## ✨ Features
 

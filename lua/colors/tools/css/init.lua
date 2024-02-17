@@ -61,7 +61,7 @@ end
 --- @return string[]|nil
 local function get_list(list_name)
   if not list_name then
-    local list = U.get_formated_colors(config.default_css_list)
+    local list = U.get_formated_colors(config.css.default_css_list)
     return list
   end
 
@@ -138,7 +138,7 @@ function CSS:replace()
   self:close()
   local new_color = U.format_strings(hex_string, config.default_format)
   vim.fn.setreg(config.register, new_color)
-  U.replace_under_cursor(new_color, vim.api.nvim_get_current_win(), config.insert_by_default)
+  U.replace_under_cursor(new_color, vim.api.nvim_get_current_win(), config.default_insert)
 end
 
 --- Replace color under cursor with choosen format

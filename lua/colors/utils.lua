@@ -375,16 +375,16 @@ end
 
 --- Tries to replace the color under the cursor.
 --- If one can't be found, than it simply inserts it at the cursor position
----@param replacement string
----@param winnr integer
----@param insert_by_default boolean
-function M.replace_under_cursor(replacement, winnr, insert_by_default)
+---@param replacement string The string to insert
+---@param winnr integer the current winnr
+---@param default_insert boolean If a color isn't found under the cursor, insert it in place instead
+function M.replace_under_cursor(replacement, winnr, default_insert)
   local cursor = get_cursor(winnr)
   local color_table = M.get_color_under_cursor()
 
   if not color_table then
-    if insert_by_default then
-      vim.fn.feedkeys(vim.api.nvim_replace_termcodes('p', true, true, true), 'n')
+    if default_insert then
+      api.nvim_put({ replacement }, '', true, false)
       return
     end
     return
