@@ -4,7 +4,7 @@
 -- TODO: Overhaul current css implementation
 --   LOW PRIORITY:  Should also be able to take the current color and match it with the closest current css color name.
 --   HIGH PRIORITY: Should still build a native UI for those who don't use telescope
---   HIGH PRIORITY: If replacing with css value then it should be in any format offered
+--   HIGH PRIORITY: If replacing with css value then it should be in any format offered by other tools
 --   HIGH PRIORITY: Fix the telescope user configuration. Currently it does not work and uses the default
 --   HIGH PRIORITY: Ensure telescope respects the configuration settings with the selection stuff
 --   DONE: Should support popular UI-library color names
