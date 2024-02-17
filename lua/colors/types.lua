@@ -113,6 +113,8 @@
 ---@field use_color_name_by_default? boolean,
 -- Telescope config options
 ---@field use_telescope? boolean
+---
+---@field telescope_config? ColorsExtConfig
 
 --- Configuration for telescope extension
 ---
@@ -121,6 +123,7 @@
 --- -- other telescope config settings...
 --- extensions = {
 ---   colors = {
+---     telescope_theme = 'dropdown',
 ---     select_behavior = 'replace',
 ---     fallback_behavior = 'save',
 ---     use_names = true,
@@ -158,6 +161,12 @@
 ---  ---
 ---  __Default:__ `save`
 --- @field fallback_behavior? 'insert'|'save'
+---
+--- Sets the theme for the telescope picker
+---
+---  ---
+---  __Default:__ `dropdown`
+--- @field telescope_theme? 'dropdown'|'cursor'|'ivy'
 
 ---@alias Format
 ---|'rgb'

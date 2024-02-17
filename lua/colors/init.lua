@@ -14,8 +14,14 @@ local M = {
       default_css_list = 'mui',
       -- True uses the css color name by default. False gets associated hex value
       use_color_name_by_default = false,
-      -- Telescope config options
-      use_telescope = true,
+      -- Configuration for telescope
+      telescope_config = {
+        telescope_theme = 'ivy',
+        select_behavior = 'replace',
+        fallback_behavior = 'save',
+        use_names = true,
+        always_save = true,
+      },
     },
     -- Sets the default register for saving a color,
     register = '+',
