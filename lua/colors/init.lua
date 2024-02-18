@@ -11,9 +11,9 @@ local M = {
     ---@type ColorsCssConfig
     css = {
       -- Sets the default list of css colors to choose from
-      default_css_list = 'mui',
+      default_list = 'mui',
       -- True uses the css color name by default. False gets associated hex value
-      use_color_name_by_default = false,
+      use_names = false,
       -- Configuration for telescope
       telescope_config = {
         telescope_theme = 'dropdown',
@@ -25,10 +25,10 @@ local M = {
     },
     -- Sets the default register for saving a color,
     register = '+',
-    -- Shows the color in the Picker/Blending tools
+    -- Shows color's hex value in the Picker/Blending tools
     preview = ' %s ',
-    -- Sets the default format
-    default_format = 'hex',
+    -- Sets the default format for saving, replacing, and inserting
+    format = 'hex',
     -- Default border for windows
     border = 'rounded',
     -- Enables debug logging
@@ -37,8 +37,10 @@ local M = {
     fallback_color = '#777777',
     -- Opens the help window when a tool is used
     open_help_by_default = true,
-    -- Tries to replace color first, but will simple insert the color if one is not found
-    insert_by_default = false,
+    -- Always inserts a color at the cursor.
+    -- If replacing, but a color is not found under the cursor, insert the current color.
+    -- If replacing and a color is found under the cursor, replace with the current color.
+    always_insert = false,
     -- Mappings table
     mappings = {
       -- Disable these keymaps to prevent modification errors in buffer
@@ -64,17 +66,17 @@ local M = {
       -- Set value to maximum
       max_value = 'M',
       -- Save the color in default format to the default register
-      save_to_register_default = '<m-cr>',
+      save = '<m-cr>',
       -- Choose a format then save the color default register
-      save_to_register_choose = 'g<cr>',
+      choose_format_save = 'g<cr>',
       -- Replace color under cursor with default format
-      replace_default = '<cr>',
+      replace = '<cr>',
       -- Choose a format then replace the color under the cursor
-      replace_choose = 'g<m-cr>',
+      choose_format_replace = 'g<m-cr>',
       -- Sets R, G, and B values to 00 in the picker
-      set_picker_to_black = 'b',
+      set_to_black = 'b',
       -- Sets R, G, and B values to FF in the picker
-      set_picker_to_white = 'w',
+      set_to_white = 'w',
       -- Export color to another tool
       export = 'e',
     },
@@ -100,7 +102,7 @@ end
 ---@param list_name? ColorListName
 M.list = function(list_name)
   if not list_name then
-    list_name = M.config.css.default_css_list
+    list_name = M.config.css.default_list
     assert(list_name)
   end
   require('colors.tools').show_list(list_name)
@@ -109,7 +111,7 @@ end
 ---@param list_name? ColorListName
 M.get_color_table = function(list_name)
   if not list_name then
-    list_name = M.config.css.default_css_list
+    list_name = M.config.css.default_list
     assert(list_name)
   end
 

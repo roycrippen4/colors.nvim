@@ -1,3 +1,10 @@
+---@class ColorTable
+---@field start_pos integer
+---@field end_pos integer
+---@field match string
+---@field rgb_values RGB
+---@field type Format
+
 ---@class UI
 ---@field main MainUI
 ---@field help HelpUI
@@ -67,52 +74,84 @@
 ---@field win_config WinConfig
 
 ---@class ColorsMappings
+-- Keymaps to disable prevent modification errors in buffer (only disables in plugin windows)
 ---@field disable? string|string[]
+-- Scrolls help window up
 ---@field scroll_up? string
+-- Scrolls help window down
 ---@field scroll_down? string
+-- Increase value
 ---@field increment? string
+-- Increase value more
 ---@field increment_big? string
+-- Increase value even more
 ---@field increment_bigger? string
+-- Decrease value
 ---@field decrement? string
+-- Decrease value more
 ---@field decrement_big? string
+-- Decrease value even more
 ---@field decrement_bigger? string
+-- Set value to miniumum
 ---@field min_value? string
+-- Set value to maximum
 ---@field max_value? string
----@field save_to_register_default? string
----@field save_to_register_choose? string
----@field replace_default? string
----@field replace_choose? string
+-- Save the color with default format to the default register
+---@field save? string
+-- Choose a format then save the color default register
+---@field choose_format_save? string
+-- Replace color under cursor with default format
+---@field replace? string
+-- Choose a format then replace the color under the cursor
+---@field choose_format_replace? string
+-- Export color to another tool
 ---@field export? string
----@field set_picker_to_black? string
----@field set_picker_to_white? string
+-- Sets R, G, and B values to 00 in the picker
+---@field set_to_black? string
+-- Sets R, G, and B values to FF in the picker
+---@field set_to_white? string
 
 ---@class ColorsConfig
+-- Sets the default register for saving a color
 ---@field register? string
+-- Shows color's hex value in the Picker/Blending tools
 ---@field preview? string
----@field default_format? Format
----@field default_insert? boolean
----@field open_help_by_default? boolean
+-- Sets the default format for saving, replacing, and inserting
+---@field format? Format
+-- Always inserts a color at the cursor.
+-- If replacing, but a color is not found under the cursor, insert the current color.
+-- If replacing and a color is found under the cursor, replace with the current color.
+---@field always_insert? boolean
+-- Always opens the help window when a tool is opened. Does not effect Telescope extension.
+---@field always_open_help? boolean
+--- Fallback color to use if a color under the cursor is not found.
+--- Allows the ability to open a tool with that color as a starting point.
 ---@field fallback_color? string
+--- Sets the border for the UI windows
 ---@field border? string
+--- Enables debug logging
 ---@field debug? boolean
+--- Keymaps for the tools
 ---@field mappings? ColorsMappings
+--- Css specific options
 ---@field css ColorsCssConfig
-
----@class ColorTable
----@field start_pos integer
----@field end_pos integer
----@field match string
----@field rgb_values RGB
----@field type Format
 
 -- css specific configuration
 ---@class ColorsCssConfig
+---
 -- Sets the default list of css colors to choose from
----@field default_css_list? 'mui'|'chakra'|'tailwind'|'base'
+---@field default_list? 'mui'|'chakra'|'tailwind'|'base'
+---
+-- Determines the list order when searching for a color match.
+-- Useful in cases where a color name is not unique to a specific list.
+--
+-- This option defaults to { 'tailwind', 'mui', 'chakra', 'base' }
+-- If you use this setting you must provide each list name in the order you want.
+-- The option will return to default settings if the list passed does not match the required criteria
+---@field search_order? CssListOrder
+--
 -- True uses the css color name by default. False gets associated hex value
----@field use_color_name_by_default? boolean,
--- Telescope config options
----@field use_telescope? boolean
+---@field use_names? boolean,
 ---
 ---@field telescope_config? ColorsExtConfig
 
@@ -172,7 +211,34 @@
 ---|'rgb'
 ---|'hsl'
 ---|'hex'
+---|'css'
 
 ---@alias RGB { [1]: integer, [2]: integer, [3]: integer }
 ---@alias ColorListItem { [1]: string, [2]: string }
 ---@alias ColorListName 'base'|'chakra'|'mui'|'tailwind'
+
+---@alias CssListOrder
+---| {[1]: 'base',     [2]: 'chakra',   [3]: 'mui',      [4]: 'tailwind'}
+---| {[1]: 'base',     [2]: 'chakra',   [3]: 'tailwind', [4]: 'mui'}
+---| {[1]: 'base',     [2]: 'mui',      [3]: 'chakra',   [4]: 'tailwind'}
+---| {[1]: 'base',     [2]: 'mui',      [3]: 'tailwind', [4]: 'chakra'}
+---| {[1]: 'base',     [2]: 'tailwind', [3]: 'chakra',   [4]: 'mui'}
+---| {[1]: 'base',     [2]: 'tailwind', [3]: 'mui',      [4]: 'chakra'}
+---| {[1]: 'chakra',   [2]: 'base',     [3]: 'mui',      [4]: 'tailwind'}
+---| {[1]: 'chakra',   [2]: 'base',     [3]: 'tailwind', [4]: 'mui'}
+---| {[1]: 'chakra',   [2]: 'mui',      [3]: 'base',     [4]: 'tailwind'}
+---| {[1]: 'chakra',   [2]: 'mui',      [3]: 'tailwind', [4]: 'base'}
+---| {[1]: 'chakra',   [2]: 'tailwind', [3]: 'base',     [4]: 'mui'}
+---| {[1]: 'chakra',   [2]: 'tailwind', [3]: 'mui',      [4]: 'base'}
+---| {[1]: 'mui',      [2]: 'base',     [3]: 'chakra',   [4]: 'tailwind'}
+---| {[1]: 'mui',      [2]: 'base',     [3]: 'tailwind', [4]: 'chakra'}
+---| {[1]: 'mui',      [2]: 'chakra',   [3]: 'base',     [4]: 'tailwind'}
+---| {[1]: 'mui',      [2]: 'chakra',   [3]: 'tailwind', [4]: 'base'}
+---| {[1]: 'mui',      [2]: 'tailwind', [3]: 'base',     [4]: 'chakra'}
+---| {[1]: 'mui',      [2]: 'tailwind', [3]: 'chakra',   [4]: 'base'}
+---| {[1]: 'tailwind', [2]: 'base',     [3]: 'chakra',   [4]: 'mui'}
+---| {[1]: 'tailwind', [2]: 'base',     [3]: 'mui',      [4]: 'chakra'}
+---| {[1]: 'tailwind', [2]: 'chakra',   [3]: 'base',     [4]: 'mui'}
+---| {[1]: 'tailwind', [2]: 'chakra',   [3]: 'mui',      [4]: 'base'}
+---| {[1]: 'tailwind', [2]: 'mui',      [3]: 'base',     [4]: 'chakra'}
+---| {[1]: 'tailwind', [2]: 'mui',      [3]: 'chakra',   [4]: 'base'}

@@ -251,18 +251,77 @@ function M.hsl_to_rgb(h, s, l)
   }
 end
 
----@param css_table ColorListItem[]
----@return { [string]: string }[]
-local function convert_color_table(css_table)
-  local color_name_as_key = {}
-  for _, pair in ipairs(css_table) do
-    local key, value = pair[1], pair[2]
-    color_name_as_key[key] = value
+local tailwind = require('colors.tools.css.lists.tailwind')
+
+---@type ColorListItem[]
+local base = require('colors.tools.css.lists.base')
+---@type ColorListItem[]
+local mui = require('colors.tools.css.lists.mui')
+---@type ColorListItem[]
+local chakra = require('colors.tools.css.lists.chakra')
+
+M.css_lists = {
+  mui,
+  chakra,
+  base,
+}
+
+-- accent-slate-100
+-- neutral-50
+-- neutral-500
+-- amber[50]
+-- amber[500]
+
+---@param  line string
+---@param  column integer
+---@return ColorTable|nil
+function M.get_css_matches(line, column)
+  local matches = {}
+  for _, list in ipairs(M.css_lists) do
+    for _, dict in ipairs(list) do
+      local pattern = dict[1]:gsub('%[', '%%['):gsub('%]', '%%]')
+      for match in line:gmatch(pattern) do
+        local start_pos, end_pos = line:find(match, 1, true)
+        if start_pos and end_pos and column >= start_pos - 1 and column <= end_pos then
+          local r, g, b = M.hex_to_rgb(dict[2])
+          table.insert(matches, {
+            start_pos = start_pos,
+            end_pos = end_pos,
+            match = match,
+            rgb_values = { r, g, b },
+            type = 'css',
+          })
+        end
+      end
+    end
   end
-  return color_name_as_key
+  return vim.tbl_extend('error', matches, M.get_tailwind_matches(line, column))
 end
 
-local css_base = convert_color_table(require('colors.tools.css.lists.base'))
+---@param line string
+---@return ColorTable|nil
+function M.get_tailwind_matches(line, column)
+  local matches = {}
+  for start, _end in line:gmatch('%f[%w-]()[^:%s][%w-]*%-[a-z%-]+%-%d+()%f[^%w-]') do
+    local sub = line:sub(tonumber(start, 10), _end - 1)
+    local color_name, shade = sub:match('[%w-]+%-([a-z%-]+)%-(%d+)')
+    shade = tonumber(shade)
+    local hex = tailwind.colors[color_name][shade]
+    local r, g, b = require('colors.utils').hex_to_rgb(hex)
+    if start and _end and column >= start - 1 and column <= _end then
+      table.insert(matches, {
+        start_pos = start,
+        end_pos = _end - 1,
+        match = sub,
+        rgb_values = { r, g, b },
+        type = 'tailwind',
+      })
+    end
+  end
+  return matches
+end
+
+-- border-x-slate-50
 
 ---@param  line string
 ---@param  column integer
@@ -270,36 +329,10 @@ local css_base = convert_color_table(require('colors.tools.css.lists.base'))
 function M.get_color_table(line, column)
   local formats = {
     {
-      get_rgb_table = function(match)
-        local hex = css_base[match:lower()]
-        if not hex then
-          return
-        end -- Handle case where match is not a known color name
-        local r = tonumber(hex:sub(2, 3), 16)
-        local g = tonumber(hex:sub(4, 5), 16)
-        local b = tonumber(hex:sub(6, 7), 16)
-        return { r, g, b }
-      end,
-      type = 'css_base',
-      pattern = '\\b(' .. table.concat(vim.tbl_keys(css_base), '|') .. ')\\b',
-    },
-    {
-      get_rgb_table = function(match)
-        local r = tonumber(match:sub(2, 2) .. match:sub(2, 2), 16)
-        local g = tonumber(match:sub(3, 3) .. match:sub(3, 3), 16)
-        local b = tonumber(match:sub(4, 4) .. match:sub(4, 4), 16)
-        return { r, g, b }
-      end,
-      type = 'hex_3',
-      pattern = '#%x%x%x',
-    },
-    {
       ---@param match string
       ---@return RGB
       get_rgb_table = function(match)
-        local r = tonumber(match:sub(2, 3), 16)
-        local g = tonumber(match:sub(4, 5), 16)
-        local b = tonumber(match:sub(6, 7), 16)
+        local r, g, b = M.hex_to_rgb(match)
         return { r, g, b }
       end,
       type = 'hex_6',
@@ -352,7 +385,7 @@ function M.get_color_table(line, column)
   }
 
   ---@type ColorTable[]
-  local matches = {}
+  local matches = M.get_css_matches(line, column) or {}
   for _, format in ipairs(formats) do
     for match in line:gmatch(format.pattern) do
       local start_pos, end_pos = line:find(match, 1, true)
@@ -369,22 +402,24 @@ function M.get_color_table(line, column)
   end
 
   if #matches > 0 then
+    logger:log(matches)
     return M.validate(matches[1])
   end
 
   return nil
 end
 
--- #ffffff -- rgb(1, 2, 3) -- hsl(1, 2%, 3%)
---- #fff
+-- #ffffff rgb(10, 20, 30) hsl(10, 20%, 30%) aliceblue
+--- #340
 --- #838212
----
 --- rgb(1, 2, 3)
 --- rgb(100, 200, 0)
---- rgb(30%, 30%, 30%)
+--- rgb(30%, 90%, 30%)
 --- rgb(1001%, 1002%, 1003%)
 -- #012345 #543210 hsl(10, 10%, 10%)
 -- hsl(210, 99%, 14%)
+--
+-- red
 
 ---@return ColorTable|nil
 function M.get_color_under_cursor()
@@ -428,6 +463,8 @@ function M.replace_under_cursor(replacement, winnr, default_insert)
   )
 end
 
+--- aliceblue
+
 ---@param colors ColorTable
 ---@return ColorTable|nil
 function M.validate(colors)
@@ -455,7 +492,7 @@ function M.validate_rgb(r, g, b)
 end
 
 ---@param hex_string string
----@param kind 'hex'|'rgb'|'hsl'
+---@param kind 'hex'|'rgb'|'hsl'|'css'
 ---@return string
 function M.format_strings(hex_string, kind)
   local red, green, blue = M.hex_to_rgb(hex_string)
@@ -467,6 +504,10 @@ function M.format_strings(hex_string, kind)
 
   if kind == 'rgb' then
     return 'rgb(' .. red .. ', ' .. green .. ', ' .. blue .. ')'
+  end
+
+  if kind == 'css' then
+    return 'css'
   end
 
   return hex_string
@@ -496,8 +537,6 @@ end
 function M.get_formated_colors(list_name)
   local list_str = 'colors.tools.css.lists.' .. list_name
 
-  logger:log(list_name)
-  logger:log(list_str)
   ---@type boolean, ColorListItem[]
   local ok, list = pcall(require, list_str)
   if not ok then

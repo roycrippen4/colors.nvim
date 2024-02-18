@@ -61,7 +61,7 @@ end
 --- @return string[]|nil
 local function get_list(list_name)
   if not list_name then
-    local list = U.get_formated_colors(config.css.default_css_list)
+    local list = U.get_formated_colors(config.css.default_list)
     return list
   end
 
@@ -93,19 +93,19 @@ function CSS:set_keymaps(bufnr, winnr)
     UI.help:open(true)
   end, opts)
 
-  map('n', config.mappings.save_to_register_default, function()
+  map('n', config.mappings.save, function()
     self:confirm()
   end, opts)
 
-  map('n', config.mappings.save_to_register_choose, function()
+  map('n', config.mappings.choose_format_save, function()
     self:confirm_select()
   end, opts)
 
-  map('n', config.mappings.replace_default, function()
+  map('n', config.mappings.replace, function()
     self:replace()
   end, opts)
 
-  map('n', config.mappings.replace_choose, function()
+  map('n', config.mappings.choose_format_replace, function()
     self:replace_select(winnr)
   end, opts)
 
@@ -136,9 +136,9 @@ end
 function CSS:replace()
   local hex_string = get_color_from_list()
   self:close()
-  local new_color = U.format_strings(hex_string, config.default_format)
+  local new_color = U.format_strings(hex_string, config.format)
   vim.fn.setreg(config.register, new_color)
-  U.replace_under_cursor(new_color, vim.api.nvim_get_current_win(), config.default_insert)
+  U.replace_under_cursor(new_color, vim.api.nvim_get_current_win(), config.always_insert)
 end
 
 --- Replace color under cursor with choosen format
@@ -186,7 +186,7 @@ function CSS:list(list_name)
     style = 'minimal',
   })
 
-  if config.open_help_by_default then
+  if config.always_open_help then
     UI.help:open(false, true)
   end
 

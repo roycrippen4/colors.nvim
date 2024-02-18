@@ -26,16 +26,16 @@ end
 
 function B:replace()
   self:close()
-  local str = U.format_strings(self.colors.gradient[self.idx], config.default_format)
+  local str = U.format_strings(self.colors.gradient[self.idx], config.format)
   vim.fn.setreg(config.register, str)
-  U.replace_under_cursor(str, get_win(), config.default_insert)
+  U.replace_under_cursor(str, get_win(), config.always_insert)
 end
 
 function B:replace_choose()
   self:close()
   local callback = function(item)
     local str = U.format_strings(self.colors.gradient[self.idx], item:sub(1, 3))
-    U.replace_under_cursor(str, get_win(), config.default_insert)
+    U.replace_under_cursor(str, get_win(), config.always_insert)
   end
 
   local format_opts = {
@@ -98,20 +98,20 @@ function B:create_keymaps(bufnr, winnr)
     self:export()
   end, opts)
 
-  map('n', config.mappings.save_to_register_default, function()
+  map('n', config.mappings.save, function()
     self:close()
-    vim.fn.setreg(config.register, U.format_strings(self.colors.gradient[self.idx], config.default_format))
+    vim.fn.setreg(config.register, U.format_strings(self.colors.gradient[self.idx], config.format))
   end, opts)
 
-  map('n', config.mappings.save_to_register_choose, function()
+  map('n', config.mappings.choose_format_save, function()
     self:save_to_register_choose()
   end, { buffer = bufnr })
 
-  map('n', config.mappings.replace_default, function()
+  map('n', config.mappings.replace, function()
     self:replace()
   end, opts)
 
-  map('n', config.mappings.replace_choose, function()
+  map('n', config.mappings.choose_format_replace, function()
     self:replace_choose()
   end, opts)
 
@@ -154,7 +154,7 @@ function B:update(bufnr, winnr)
   set_option('modifiable', true, { buf = bufnr })
   set_hl(0, 'ColorsPreview', { bg = self.colors.gradient[self.idx] })
 
-  local c_strs = U.format_strings(self.colors.gradient[self.idx], config.default_format)
+  local c_strs = U.format_strings(self.colors.gradient[self.idx], config.format)
   local preview = string.format(config.preview, c_strs)
   local lines = string.rep(' ', get_width(winnr) - #preview) .. preview
   local marker = string.rep(' ', math.floor(self.idx / 5) - 1) .. ''

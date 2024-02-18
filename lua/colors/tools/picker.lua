@@ -5,6 +5,7 @@ local set_option = api.nvim_set_option_value
 local set_lines = api.nvim_buf_set_lines
 local set_cursor = api.nvim_win_set_cursor
 local get_width = api.nvim_win_get_width
+local get_win = api.nvim_get_current_win
 local get_cursor = api.nvim_win_get_cursor
 local create_ns = api.nvim_create_namespace
 local map = vim.keymap.set
@@ -55,7 +56,6 @@ end
 function Picker:close()
   UI.main:close()
   UI.help:close()
-  self.prev_win = api.nvim_get_current_win()
 end
 
 ---@param bufnr integer
@@ -96,20 +96,20 @@ function Picker:set_keymaps(bufnr, winnr)
     self:adjust_color(-10, bufnr, winnr)
   end, opts)
 
-  map('n', config.mappings.save_to_register_default, function()
+  map('n', config.mappings.save, function()
     self:confirm()
   end, opts)
 
-  map('n', config.mappings.save_to_register_choose, function()
+  map('n', config.mappings.choose_format_save, function()
     self:confirm_select()
   end, opts)
 
-  map('n', config.mappings.replace_default, function()
+  map('n', config.mappings.replace, function()
     self:replace()
   end, opts)
 
-  map('n', config.mappings.replace_choose, function()
-    self:replace_select(winnr)
+  map('n', config.mappings.choose_format_replace, function()
+    self:replace_select()
   end, opts)
 
   map('n', config.mappings.max_value, function()
@@ -120,11 +120,11 @@ function Picker:set_keymaps(bufnr, winnr)
     self:set_color_value(0, bufnr, winnr)
   end, opts)
 
-  map('n', config.mappings.set_picker_to_black, function()
+  map('n', config.mappings.set_to_black, function()
     self:set_to_white_or_black(bufnr, winnr, true)
   end, opts)
 
-  map('n', config.mappings.set_picker_to_white, function()
+  map('n', config.mappings.set_to_white, function()
     self:set_to_white_or_black(bufnr, winnr)
   end, opts)
 
@@ -244,25 +244,24 @@ end
 --- Confirm color and save with default format
 function Picker:confirm()
   self:close()
-  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.default_format))
+  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.format))
 end
 
 --- Replace color under cursor with default format
 function Picker:replace()
   self:close()
-  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.default_format))
-  local replacement = U.format_strings(self:make_hex_string(), config.default_format)
-  U.replace_under_cursor(replacement, vim.api.nvim_get_current_win(), config.default_insert)
+  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.format))
+  local replacement = U.format_strings(self:make_hex_string(), config.format)
+  U.replace_under_cursor(replacement, get_win(), config.always_insert)
 end
 
 --- Replace color under cursor with choosen format
----@param winnr integer
-function Picker:replace_select(winnr)
+function Picker:replace_select()
   self:close()
 
   local callback = function(item)
     item = item:sub(1, 3)
-    U.replace_under_cursor(U.format_strings(self:make_hex_string(), item), winnr, config.default_insert)
+    U.replace_under_cursor(U.format_strings(self:make_hex_string(), item), get_win(), config.always_insert)
   end
 
   U.select(self:get_select_opts(), 'Choose format', callback)
@@ -335,7 +334,7 @@ function Picker:pick(hex_string)
     style = 'minimal',
   })
 
-  if config.open_help_by_default then
+  if config.always_open_help then
     UI.help:open(true)
   end
 
@@ -380,9 +379,10 @@ function Picker:create_autocmds()
   autocmd('BufEnter', {
     group = PickerGroup,
     callback = function()
-      if vim.bo.ft ~= 'Colors' then
+      if vim.bo.ft ~= 'Colors' or vim.bo.ft ~= 'TelescopePrompt' then
         vim.go.guicursor = _gui_cursor
         self:close()
+        self.prev_win = get_win()
       end
     end,
   })

@@ -115,7 +115,7 @@ local css_list_picker = function()
 end
 
 local css_default_list = function()
-  local color_list = colors.get_color_table(config.css.default_css_list)
+  local color_list = colors.get_color_table(config.css.default_list)
   if not color_list then
     vim.notify('Color list could not be found.')
     return

@@ -92,23 +92,23 @@ function help:set_lines(picker, css)
     ' Set to minimum    ' .. c.mappings.min_value .. ' ',
     ' Set to maximum    ' .. c.mappings.max_value .. ' ',
     ' Export to tool    ' .. c.mappings.export .. ' ',
-    ' Save to register  ' .. c.mappings.save_to_register_default .. ' ',
-    ' Pick -> save      ' .. c.mappings.save_to_register_choose .. ' ',
-    ' Replace color     ' .. c.mappings.replace_default .. ' ',
-    ' Pick -> replace   ' .. c.mappings.replace_choose .. ' ',
+    ' Save to register  ' .. c.mappings.save .. ' ',
+    ' Pick -> save      ' .. c.mappings.choose_format_save .. ' ',
+    ' Replace color     ' .. c.mappings.replace .. ' ',
+    ' Pick -> replace   ' .. c.mappings.choose_format_replace .. ' ',
   }
 
   if picker then
     table.insert(lines, 5, ' Move up           k ')
     table.insert(lines, 6, ' Move down         j ')
-    table.insert(lines, ' Set to white      ' .. c.mappings.set_picker_to_white)
-    table.insert(lines, ' Set to black      ' .. c.mappings.set_picker_to_black)
+    table.insert(lines, ' Set to white      ' .. c.mappings.set_to_white)
+    table.insert(lines, ' Set to black      ' .. c.mappings.set_to_black)
   end
 
   if css then
     -- TODO: These need to be actual keybinds
-    table.insert(lines, ' Set to white      ' .. c.mappings.set_picker_to_white)
-    table.insert(lines, ' Set to black      ' .. c.mappings.set_picker_to_black)
+    table.insert(lines, ' Set to white      ' .. c.mappings.set_to_white)
+    table.insert(lines, ' Set to black      ' .. c.mappings.set_to_black)
   end
 
   set_lines(self.buf, 0, -1, false, lines)
