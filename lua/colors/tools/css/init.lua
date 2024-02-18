@@ -17,20 +17,7 @@ local _gui_cursor = vim.go.guicursor
 
 local CSS = {}
 
--- --- Get the value for a color
--- ---@param color string Color name
--- ---@return string|nil
--- function M.get_color_value(color)
---   for _, color_table in ipairs(M.colors) do
---     if color_table[1] == color then
---       return color_table[2]
---     end
---   end
---   return nil
--- end
-
 ---@param list_name string
----@return ColorListItem[]|nil
 function CSS:get_css_color_table(list_name)
   local list_path = 'colors.tools.css.lists.' .. list_name
 

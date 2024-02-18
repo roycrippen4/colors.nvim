@@ -1,4 +1,5 @@
 local has_telescope, telescope = pcall(require, 'telescope')
+local logger = require('colors.logger')
 
 if not has_telescope then
   error('This plugin requires telescope.nvim')
@@ -20,12 +21,13 @@ local finders = require('telescope.finders')
 local conf = require('telescope.config').values
 local actions = require('telescope.actions')
 local actions_state = require('telescope.actions.state')
+local ns = vim.api.nvim_create_namespace('TelescopeColors')
 
 local function make_display(entry)
   ---@type string
   local display = entry.value[1]
-  local hl_name = 'TelescopeResults' .. display:gsub('%[', ''):gsub('%]', ''):upper()
-  return display, { { { 0, #display + 40 }, hl_name } }
+  local hl_name = 'TelescopeColorResults_' .. display:gsub('%[', '_'):gsub('%]', ''):gsub('%-', '_'):upper()
+  return display, { { { 0, #display }, hl_name } }
 end
 
 local entry_maker = function(entry)
@@ -77,13 +79,48 @@ local defaults = function(color_list)
   }
 end
 
----@param colors_list ColorListItem[]
-local function make_highlights(colors_list)
-  for _, dict in ipairs(colors_list) do
-    local hl_name = 'TelescopeResults' .. dict[1]:gsub('%[', ''):gsub('%]', ''):upper()
-    local fg_color = utils.get_fg_color(dict[2])
-    vim.api.nvim_set_hl(0, hl_name, { fg = fg_color, bg = dict[2] })
+local sort_normal = function(a, b)
+  local pattern = '(%a+)%-?%[?(%a*)(%d*)%]?'
+  local nameA, prefixA, numA = a[1]:match(pattern)
+  local nameB, prefixB, numB = b[1]:match(pattern)
+  numA, numB = tonumber(numA) or 0, tonumber(numB) or 0
+
+  if nameA < nameB then
+    return true
   end
+  if nameA > nameB then
+    return false
+  end
+
+  if prefixA == '' and prefixB == 'A' then
+    return true
+  end
+  if prefixA == 'A' and prefixB == '' then
+    return false
+  end
+
+  return numA < numB
+end
+
+---@param colors_list table
+---@param choice 'mui'|'base'|'tailwind'|'chakra'
+local function make_highlights(colors_list, choice)
+  local color_choices = {}
+
+  if choice ~= 'base' then
+    for color, shade_table in pairs(colors_list.colors) do
+      for shade, hex in pairs(shade_table) do
+        local entry = ((choice == 'tailwind') and color .. '-' .. shade) or color .. '[' .. shade .. ']'
+        table.insert(color_choices, { entry, hex })
+        local hl_name = 'TelescopeColorResults_' .. color:gsub('%[', ''):gsub('%]', ''):upper() .. '_' .. shade
+        local fg_color = utils.get_fg_color(hex)
+        vim.api.nvim_set_hl(0, hl_name, { fg = fg_color, bg = hex })
+      end
+    end
+    table.sort(color_choices, sort_normal)
+  end
+
+  return color_choices
 end
 
 ---@param choice ColorListName
@@ -99,9 +136,10 @@ local function css_list_picker_callback(choice)
     return
   end
 
-  make_highlights(color_list)
+  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+  local choices = make_highlights(color_list, choice)
 
-  pickers.new(theme['get_' .. _config.telescope_theme](), defaults(color_list)):find()
+  pickers.new(theme['get_' .. _config.telescope_theme](), defaults(choices)):find()
 end
 
 --- Shows lists with vim.ui.select() and opens the choice in the telescope picker
@@ -116,16 +154,18 @@ local css_list_picker = function()
 end
 
 local css_default_list = function()
-  local color_list = colors.get_color_table(config.css.default_list)
+  local color_list = colors.get_color_table('tailwind')
+  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+  -- local color_list = colors.get_color_table(config.css.default_list)
   if not color_list then
     vim.notify('Color list could not be found.')
     return
   end
 
-  make_highlights(color_list)
+  local choices = make_highlights(color_list, 'tailwind')
 
   -- border-x-slate-50
-  pickers.new(theme['get_' .. _config.telescope_theme](), defaults(color_list)):find()
+  pickers.new(theme['get_' .. _config.telescope_theme](), defaults(choices)):find()
 end
 
 return telescope.register_extension({
