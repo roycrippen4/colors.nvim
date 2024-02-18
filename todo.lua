@@ -1,7 +1,12 @@
---- TODO: Better tailwind detection.
----   We may need to abandon using tailwind colors alltogether.
----   Detection is very dificult due to the highly composable nature.
----   If I can figure out a way to differentiate between 'slate-50' and 'slate-500' we can leave the support as it stands.
+--  FIX: Telescope extension.
+--      The tailwind data structure update has broken the telescope extension.
+--      Need to fix it. Shouldn't be too bad.
+
+-- TODO: LOW PRIORITY: Replace a tailwindcss color/shade with a different color/shade
+--        Currently if you were to try to replace a color/shade combo with a different set it would destroy the prefix.
+--        The plugin should be able to maintain the prefix and only change the color/shade
+--        Example of problem: className="accent-slate-500" -> className="slate-400"
+--        It would be dope as fuck to extend <C-a> and <C-x> to increment the shade. Who knows how hard that would be though.
 
 -- TODO: Update the readme.
 -- It is so inaccurate and misleading right now.
@@ -29,3 +34,7 @@
 --       Currently getting an `invalid winnr` error.
 -- TODO: DONE: Decide whether or not to use 3-digit hex
 --       We will not be supporting 3-digit hex
+--- TODO: DONE: Better tailwind detection.
+---       We may need to abandon using tailwind colors alltogether.
+---       Detection is very dificult due to the highly composable nature.
+---       If I can figure out a way to differentiate between 'slate-50' and 'slate-500' we can leave the support as it stands.

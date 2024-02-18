@@ -588,4 +588,12 @@ function M.get_fg_color(hex_string)
   return 'white'
 end
 
+-- function M.increment_shade()
+--   local match = M.get_color_under_cursor()
+
+--   if not match then
+--     return
+--   end
+-- end
+
 return M

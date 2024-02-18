@@ -92,6 +92,7 @@ local function css_list_picker_callback(choice)
     return
   end
 
+  -- border-x-slate-50
   local color_list = colors.get_color_table(choice)
   if not color_list then
     vim.notify('Color list could not be found.')
@@ -123,6 +124,7 @@ local css_default_list = function()
 
   make_highlights(color_list)
 
+  -- border-x-slate-50
   pickers.new(theme['get_' .. _config.telescope_theme](), defaults(color_list)):find()
 end
 
