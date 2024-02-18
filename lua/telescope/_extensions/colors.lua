@@ -1,5 +1,5 @@
 local has_telescope, telescope = pcall(require, 'telescope')
-local logger = require('colors.logger')
+-- local logger = require('colors.logger')
 
 if not has_telescope then
   error('This plugin requires telescope.nvim')
@@ -118,6 +118,18 @@ local function make_highlights(colors_list, choice)
       end
     end
     table.sort(color_choices, sort_normal)
+  else
+    for k, v in pairs(colors_list) do
+      local hl_name = 'TelescopeColorResults_' .. k
+      local fg_color = utils.get_fg_color(v)
+      vim.api.nvim_set_hl(0, hl_name, { fg = fg_color, bg = v })
+      table.insert(color_choices, { k, v })
+    end
+
+    table.sort(color_choices, function(a, b)
+      return utils.hex_to_luminance(a[2]) < utils.hex_to_luminance(b[2])
+    end)
+    return color_choices
   end
 
   return color_choices
@@ -154,15 +166,15 @@ local css_list_picker = function()
 end
 
 local css_default_list = function()
-  local color_list = colors.get_color_table('tailwind')
   vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-  -- local color_list = colors.get_color_table(config.css.default_list)
+  local color_list = colors.get_color_table(config.css.default_list)
+
   if not color_list then
     vim.notify('Color list could not be found.')
     return
   end
 
-  local choices = make_highlights(color_list, 'tailwind')
+  local choices = make_highlights(color_list, config.css.default_list)
 
   -- border-x-slate-50
   pickers.new(theme['get_' .. _config.telescope_theme](), defaults(choices)):find()
