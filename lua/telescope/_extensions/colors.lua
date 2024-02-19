@@ -141,7 +141,6 @@ local function css_list_picker_callback(choice)
     return
   end
 
-  -- border-x-slate-50
   local color_list = colors.get_color_table(choice)
   if not color_list then
     vim.notify('Color list could not be found.')
@@ -154,7 +153,6 @@ local function css_list_picker_callback(choice)
   pickers.new(theme['get_' .. _config.telescope_theme](), defaults(choices)):find()
 end
 
---- Shows lists with vim.ui.select() and opens the choice in the telescope picker
 local css_list_picker = function()
   local list_names = { 'base', 'chakra', 'mui', 'tailwind' }
 
@@ -176,7 +174,6 @@ local css_default_list = function()
 
   local choices = make_highlights(color_list, config.css.default_list)
 
-  -- border-x-slate-50
   pickers.new(theme['get_' .. _config.telescope_theme](), defaults(choices)):find()
 end
 

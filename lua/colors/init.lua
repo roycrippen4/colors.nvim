@@ -11,7 +11,7 @@ local M = {
     ---@type ColorsCssConfig
     css = {
       -- Sets the default list of css colors to choose from
-      default_list = 'base',
+      default_list = 'tailwind',
       -- True uses the css color name by default. False gets associated hex value
       use_names = false,
       -- Configuration for telescope

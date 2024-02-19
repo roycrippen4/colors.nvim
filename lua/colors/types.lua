@@ -4,6 +4,9 @@
 ---@field match string
 ---@field rgb_values RGB
 ---@field type Format
+---@field prefix? Prefix
+
+---@alias Prefix { start: integer, _end: integer, name: string } | nil
 
 ---@class UI
 ---@field main MainUI
