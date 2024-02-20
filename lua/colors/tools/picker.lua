@@ -92,7 +92,7 @@ function Picker:set_keymaps(bufnr, winnr)
     self:adjust_color(10, bufnr, winnr)
   end, opts)
 
-  map('n', config.mappings.decrement_big, function()
+  map('n', config.mappings.decrement_bigger, function()
     self:adjust_color(-10, bufnr, winnr)
   end, opts)
 
@@ -113,11 +113,11 @@ function Picker:set_keymaps(bufnr, winnr)
   end, opts)
 
   map('n', config.mappings.max_value, function()
-    self:set_color_value(255, bufnr, winnr)
+    self:set_color(255, bufnr, winnr)
   end, opts)
 
   map('n', config.mappings.min_value, function()
-    self:set_color_value(0, bufnr, winnr)
+    self:set_color(0, bufnr, winnr)
   end, opts)
 
   map('n', config.mappings.set_to_black, function()
@@ -138,15 +138,15 @@ end
 ---@param black? boolean
 function Picker:set_to_white_or_black(bufnr, winnr, black)
   if black then
-    self:set_color_value(0, bufnr, winnr, 1)
-    self:set_color_value(0, bufnr, winnr, 2)
-    self:set_color_value(0, bufnr, winnr, 3)
+    self:set_color(0, bufnr, winnr, 1)
+    self:set_color(0, bufnr, winnr, 2)
+    self:set_color(0, bufnr, winnr, 3)
     return
   end
 
-  self:set_color_value(255, bufnr, winnr, 1)
-  self:set_color_value(255, bufnr, winnr, 2)
-  self:set_color_value(255, bufnr, winnr, 3)
+  self:set_color(255, bufnr, winnr, 1)
+  self:set_color(255, bufnr, winnr, 2)
+  self:set_color(255, bufnr, winnr, 3)
 end
 
 function Picker:make_hex_string()
@@ -234,8 +234,11 @@ function Picker:confirm_select()
   self:close()
 
   local callback = function(item)
-    item = item:sub(1, 3)
-    vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), item))
+    if not item then
+      return
+    end
+
+    vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), item:sub(1, 3)))
   end
 
   U.select(self:get_select_opts(), 'Choose format', callback)
@@ -260,8 +263,11 @@ function Picker:replace_select()
   self:close()
 
   local callback = function(item)
-    item = item:sub(1, 3)
-    U.replace_under_cursor(U.format_strings(self:make_hex_string(), item), get_win(), config.always_insert)
+    if not item then
+      return
+    end
+
+    U.replace_under_cursor(U.format_strings(self:make_hex_string(), item:sub(1, 3)), get_win(), config.always_insert)
   end
 
   U.select(self:get_select_opts(), 'Choose format', callback)
@@ -272,7 +278,7 @@ end
 ---@param bufnr integer
 ---@param winnr integer
 ---@param idx? integer
-function Picker:set_color_value(color_value, bufnr, winnr, idx)
+function Picker:set_color(color_value, bufnr, winnr, idx)
   color_value = math.min(math.max(color_value, 0), 255)
   local row
   if idx then
@@ -302,10 +308,16 @@ end
 
 function Picker:export()
   local opts = { 'grayscale', 'lighten', 'darken' }
+
   local function callback(tool)
+    if not tool then
+      return
+    end
+
     local hex_color = '#' .. U.hex(self.red) .. U.hex(self.green) .. U.hex(self.blue)
     require('colors.tools')[tool](hex_color)
   end
+
   U.select(opts, 'Choose tool', callback)
   self:close()
 end

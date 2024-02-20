@@ -46,9 +46,9 @@ local M = {
       -- Disable these keymaps to prevent modification errors in buffer
       disable = d,
       -- Scrolls help window up
-      scroll_up = '<C-S-P>',
+      scroll_up = '<C-P>',
       -- Scrolls help window down
-      scroll_down = '<C-S-N>',
+      scroll_down = '<C-N>',
       -- Increase value
       increment = 'l',
       -- Decrease value
@@ -58,9 +58,9 @@ local M = {
       -- Decrease value more
       decrement_big = 'H',
       -- Increase value even more
-      increment_bigger = '<M-L>',
+      increment_bigger = '<C-S-L>',
       -- Decrease value even more
-      decrement_bigger = '<M-H>',
+      decrement_bigger = '<C-S-H>',
       -- Set value to miniumum
       min_value = 'm',
       -- Set value to maximum

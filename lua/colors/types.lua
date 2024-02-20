@@ -47,7 +47,7 @@
 ---@field red number
 ---@field replace function
 ---@field replace_select function
----@field set_color_value function
+---@field set_color function
 ---@field set_keymaps function
 ---@field set_picker_lines function
 ---@field set_to_white_or_black function
