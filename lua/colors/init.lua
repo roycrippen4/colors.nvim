@@ -1,6 +1,6 @@
 local logger = require('colors.logger')
 local Utils = require('colors.utils')
-logger:show()
+-- logger:show()
 
 local d = { 'i', 'a', 'o', 'O', 'd', 'D', 'r', 'R', 's', 'S', 'x', 'X', 'c', 'C', 'K', '/', '?', ':', 'q:', 'q/', 'q?' }
 
@@ -35,7 +35,7 @@ local M = {
     -- Default border for windows
     border = 'rounded',
     -- Enables debug logging
-    debug = true,
+    debug = false,
     -- Default color used if a color is not found under the cursor
     fallback_color = '#777777',
     -- Opens the help window when a tool is used

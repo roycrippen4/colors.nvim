@@ -69,22 +69,22 @@ function help:update_scrollbar()
   }
   set_lines(self.scrollbar_buf, 0, -1, false, scrollbar_lines[self.bar_pos])
 
-  local height = vim.api.nvim_win_get_height(self.scrollbar_win)
+  -- local height = vim.api.nvim_win_get_height(self.scrollbar_win)
 
-  for i = 1, height do
-    if i == self.bar_pos or self.bar_pos == height then
-      add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
+  -- for i = 1, height do
+  --   if i == self.bar_pos or self.bar_pos == height then
+  --     add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
 
-      if self.bar_pos >= 2 then
-        add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 2, 0, -1)
-        add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
-      end
-    end
+  --     if self.bar_pos >= 2 then
+  --       add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 2, 0, -1)
+  --       add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
+  --     end
+  --   end
 
-    -- if i == height then
-    --   add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
-    -- end
-  end
+  --   -- if i == height then
+  --   --   add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
+  --   -- end
+  -- end
 end
 
 ---@param picker? boolean
@@ -152,7 +152,7 @@ function help:make_wins(picker, css)
   -- make scrollbar window
   self.scrollbar_win = open_win(self.scrollbar_buf, false, {
     relative = 'win',
-    col = col + width + 2,
+    col = col + width + 1,
     row = 0,
     zindex = 101,
     width = 1,
