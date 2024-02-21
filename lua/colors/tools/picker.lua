@@ -10,7 +10,7 @@ local get_cursor = api.nvim_win_get_cursor
 local create_ns = api.nvim_create_namespace
 local map = vim.keymap.set
 
-local logger = require('colors.logger')
+-- local logger = require('colors.logger')
 local config = require('colors').config
 local _gui_cursor = vim.go.guicursor
 local U = require('colors.utils')

@@ -39,11 +39,11 @@ function help:init()
   self.ns = create_ns('ColorsHelp')
   self.buf = create_buf(false, true)
   self.is_open = true
-  set_option('bufhidden', 'wipe', { buf = self.buf })
 
   self.bar_pos = 1
   self.scrollbar_ns = create_ns('ColorsHelpScrollbar')
   self.scrollbar_buf = create_buf(false, true)
+  set_option('bufhidden', 'wipe', { buf = self.buf })
 end
 
 ---@param len integer
@@ -54,24 +54,36 @@ function help:add_hl(len)
     add_hl(self.buf, self.ns, 'Keyword', i, 0, 19)
   end
 end
-
+-- │
 function help:update_scrollbar()
   local scrollbar_lines = {
-    { '█', '', '', '', '', '', '', '' },
-    { '█', '█', '', '', '', '', '', '' },
-    { '', '█', '█', '', '', '', '', '' },
-    { '', '', '█', '█', '', '', '', '' },
-    { '', '', '', '█', '█', '', '', '' },
-    { '', '', '', '', '█', '█', '', '' },
-    { '', '', '', '', '', '█', '█', '' },
-    { '', '', '', '', '', '', '█', '█' },
-    { '', '', '', '', '', '', '', '█' },
+    { '█', '│', '│', '│', '│', '│', '│', '│' },
+    { '█', '█', '│', '│', '│', '│', '│', '│' },
+    { '│', '█', '█', '│', '│', '│', '│', '│' },
+    { '│', '│', '█', '█', '│', '│', '│', '│' },
+    { '│', '│', '│', '█', '█', '│', '│', '│' },
+    { '│', '│', '│', '│', '█', '█', '│', '│' },
+    { '│', '│', '│', '│', '│', '█', '█', '│' },
+    { '│', '│', '│', '│', '│', '│', '█', '█' },
+    { '│', '│', '│', '│', '│', '│', '│', '█' },
   }
   set_lines(self.scrollbar_buf, 0, -1, false, scrollbar_lines[self.bar_pos])
 
   local height = vim.api.nvim_win_get_height(self.scrollbar_win)
-  for i = 0, height do
-    add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i, 0, -1)
+
+  for i = 1, height do
+    if i == self.bar_pos or self.bar_pos == height then
+      add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
+
+      if self.bar_pos >= 2 then
+        add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 2, 0, -1)
+        add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
+      end
+    end
+
+    -- if i == height then
+    --   add_hl(self.scrollbar_buf, self.scrollbar_ns, 'ColorsHelpScrollbar', i - 1, 0, -1)
+    -- end
   end
 end
 
@@ -135,7 +147,7 @@ function help:make_wins(picker, css)
     style = 'minimal',
     focusable = true,
   })
-  vim.wo[self.win].scrolloff = 0
+  vim.wo[self.win].scrolloff = 10
 
   -- make scrollbar window
   self.scrollbar_win = open_win(self.scrollbar_buf, false, {

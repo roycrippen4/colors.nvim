@@ -141,7 +141,7 @@ local function css_list_picker_callback(choice)
     return
   end
 
-  local color_list = colors.get_color_table(choice)
+  local color_list = colors.get_css_table(choice)
   if not color_list then
     vim.notify('Color list could not be found.')
     return
@@ -165,7 +165,7 @@ end
 
 local css_default_list = function()
   vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-  local color_list = colors.get_color_table(config.css.default_list)
+  local color_list = colors.get_css_table(config.css.default_list)
 
   if not color_list then
     vim.notify('Color list could not be found.')

@@ -10,17 +10,20 @@ local M = {
     -- css specific configuration
     ---@type ColorsCssConfig
     css = {
-      -- Sets the default list of css colors to choose from
+      -- Sets the default list of css colors to choose from. Options: 'base'|'mui'|'chakra'|'tailwind'
       default_list = 'tailwind',
-      -- True uses the css color name by default. False gets associated hex value
+      -- True uses the css color name by default. False uses associated hex value
       use_names = false,
-      -- Configuration for telescope
+      -- Configuration for Telescope
       telescope_config = {
+        -- Sets the telescope theme. Options: 'dropdown'|'ivy'|'cursor'
         telescope_theme = 'dropdown',
+        -- Sets the telescope behavior. Options: 'replace'|'insert'|'save'
         select_behavior = 'replace',
+        -- Sets the fallback behavior when select_behavior is 'replace'.
+        -- If a color isn't under the cursor it can either 'save' or 'insert'.
+        -- The `always_insert` setting will override this setting.
         fallback_behavior = 'save',
-        use_names = true,
-        always_save = true,
       },
     },
     -- Sets the default register for saving a color,
@@ -36,7 +39,7 @@ local M = {
     -- Default color used if a color is not found under the cursor
     fallback_color = '#777777',
     -- Opens the help window when a tool is used
-    open_help_by_default = true,
+    always_open_help = true,
     -- Always inserts a color at the cursor.
     -- If replacing, but a color is not found under the cursor, insert the current color.
     -- If replacing and a color is found under the cursor, replace with the current color.
@@ -46,9 +49,9 @@ local M = {
       -- Disable these keymaps to prevent modification errors in buffer
       disable = d,
       -- Scrolls help window up
-      scroll_up = '<C-P>',
+      scroll_up = '<C-p>',
       -- Scrolls help window down
-      scroll_down = '<C-N>',
+      scroll_down = '<C-n>',
       -- Increase value
       increment = 'l',
       -- Decrease value
@@ -109,7 +112,7 @@ M.list = function(list_name)
 end
 
 ---@param list_name? ColorListName
-M.get_color_table = function(list_name)
+M.get_css_table = function(list_name)
   if not list_name then
     list_name = M.config.css.default_list
     assert(list_name)

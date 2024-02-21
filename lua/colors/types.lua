@@ -125,6 +125,12 @@
 -- If replacing, but a color is not found under the cursor, insert the current color.
 -- If replacing and a color is found under the cursor, replace with the current color.
 ---@field always_insert? boolean
+---
+---  `True` always saves the selected color the default register
+---
+---  ---
+---  __Default:__ `True`
+--- @field always_save? boolean
 -- Always opens the help window when a tool is opened. Does not effect Telescope extension.
 ---@field always_open_help? boolean
 --- Fallback color to use if a color under the cursor is not found.
@@ -168,7 +174,6 @@
 ---     telescope_theme = 'dropdown',
 ---     select_behavior = 'replace',
 ---     fallback_behavior = 'save',
----     use_names = true,
 ---     always_save = true
 ---   }
 --- }
@@ -183,17 +188,6 @@
 ---  ---
 ---  __Default:__ `replace`
 --- @field select_behavior? 'replace'|'insert'|'save'
----  `True` uses css color names by default. `False` uses hex values.
----
----  ---
----  __Default:__ `True`
---- @field use_names? boolean
----
----  `True` always saves the selected color the default register
----
----  ---
----  __Default:__ `True`
---- @field always_save? boolean
 ---
 --- Defines the behavior in the event of a failure.
 --- Typically used with `select_behavior` = "replace".
