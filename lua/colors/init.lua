@@ -1,6 +1,6 @@
 local logger = require('colors.logger')
 local Utils = require('colors.utils')
--- logger:show()
+logger:show()
 
 local d = { 'i', 'a', 'o', 'O', 'd', 'D', 'r', 'R', 's', 'S', 'x', 'X', 'c', 'C', 'K', '/', '?', ':', 'q:', 'q/', 'q?' }
 
@@ -33,7 +33,16 @@ local M = {
     -- Sets the default format for saving, replacing, and inserting
     format = 'hex',
     -- Default border for windows
-    border = 'rounded',
+    border = {
+      tl = { '╭', 'ColorsBorder' },
+      t = { '─', 'ColorsBorder' },
+      tr = { '╮', 'ColorsBorder' },
+      l = { '│', 'ColorsBorder' },
+      r = { '│', 'ColorsBorder' },
+      bl = { '╰', 'ColorsBorder' },
+      b = { '─', 'ColorsBorder' },
+      br = { '╯', 'ColorsBorder' },
+    },
     -- Enables debug logging
     debug = false,
     -- Default color used if a color is not found under the cursor
@@ -141,6 +150,7 @@ end
 
 local function set_highlight_groups()
   vim.api.nvim_set_hl(0, 'ColorsHelpScrollbar', { fg = '#626262' })
+  vim.api.nvim_set_hl(0, 'ColorsBorder', { link = 'FloatBorder' })
   vim.api.nvim_set_hl(0, 'ColorsCurrentLine', { italic = true, default = true })
   vim.api.nvim_set_hl(0, 'ColorsCursor', { blend = 100, nocombine = true })
 end

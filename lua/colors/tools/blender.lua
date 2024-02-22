@@ -1,5 +1,7 @@
 local api = vim.api
 local add_hl = api.nvim_buf_add_highlight
+local autocmd = api.nvim_create_autocmd
+local augroup = api.nvim_create_augroup
 local create_ns = api.nvim_create_namespace
 local set_hl = api.nvim_set_hl
 local set_lines = api.nvim_buf_set_lines
@@ -10,9 +12,9 @@ local set_cursor = api.nvim_win_set_cursor
 
 local _gui_cursor = vim.go.guicursor
 local config = require('colors').config
-local U = require('colors.utils')
-local UI = require('colors.ui')
-local logger = require('colors.logger')
+local utils = require('colors.utils')
+local ui = require('colors.ui')
+-- local logger = require('colors.logger')
 local map = vim.keymap.set
 
 ---@class Blender
@@ -20,50 +22,50 @@ local B = {}
 
 function B:close()
   vim.go.guicursor = _gui_cursor
-  UI.help:close()
-  UI.main:close()
+  ui.help:close()
+  ui.main:close()
 end
 
 function B:replace()
   self:close()
-  local str = U.format_strings(self.colors.gradient[self.idx], config.format)
+  local str = utils.format_strings(self.colors.gradient[self.idx], config.format)
   vim.fn.setreg(config.register, str)
-  U.replace_under_cursor(str, get_win(), config.always_insert)
+  utils.replace_under_cursor(str, get_win(), config.always_insert)
 end
 
 function B:replace_choose()
   self:close()
   local callback = function(item)
-    local str = U.format_strings(self.colors.gradient[self.idx], item:sub(1, 3))
-    U.replace_under_cursor(str, get_win(), config.always_insert)
+    local str = utils.format_strings(self.colors.gradient[self.idx], item:sub(1, 3))
+    utils.replace_under_cursor(str, get_win(), config.always_insert)
   end
 
   local format_opts = {
-    'hex: ' .. U.format_strings(self.colors.gradient[self.idx], 'hex'),
-    'rgb: ' .. U.format_strings(self.colors.gradient[self.idx], 'rgb'),
-    'hsl: ' .. U.format_strings(self.colors.gradient[self.idx], 'hsl'),
+    'hex: ' .. utils.format_strings(self.colors.gradient[self.idx], 'hex'),
+    'rgb: ' .. utils.format_strings(self.colors.gradient[self.idx], 'rgb'),
+    'hsl: ' .. utils.format_strings(self.colors.gradient[self.idx], 'hsl'),
   }
 
-  U.select(format_opts, 'Choose format', callback)
+  utils.select(format_opts, 'Choose format', callback)
 end
 
 function B:save_to_register_choose()
   self:close()
   local callback = function(item)
-    vim.fn.setreg(config.register, U.format_strings(self.colors.gradient[self.idx], item:sub(1, 3)))
+    vim.fn.setreg(config.register, utils.format_strings(self.colors.gradient[self.idx], item:sub(1, 3)))
   end
 
   local format_opts = {
-    'hex: ' .. U.format_strings(self.colors.gradient[self.idx], 'hex'),
-    'rgb: ' .. U.format_strings(self.colors.gradient[self.idx], 'rgb'),
-    'hsl: ' .. U.format_strings(self.colors.gradient[self.idx], 'hsl'),
+    'hex: ' .. utils.format_strings(self.colors.gradient[self.idx], 'hex'),
+    'rgb: ' .. utils.format_strings(self.colors.gradient[self.idx], 'rgb'),
+    'hsl: ' .. utils.format_strings(self.colors.gradient[self.idx], 'hsl'),
   }
 
-  U.select(format_opts, 'Choose format', callback)
+  utils.select(format_opts, 'Choose format', callback)
 end
 
 function B:create_keymaps(bufnr, winnr)
-  U.disable_keymaps(config.mappings.disable)
+  utils.disable_keymaps(config.mappings.disable)
   local opts = { buffer = true, nowait = true, silent = true }
 
   map('n', config.mappings.increment, function()
@@ -100,7 +102,7 @@ function B:create_keymaps(bufnr, winnr)
 
   map('n', config.mappings.save, function()
     self:close()
-    vim.fn.setreg(config.register, U.format_strings(self.colors.gradient[self.idx], config.format))
+    vim.fn.setreg(config.register, utils.format_strings(self.colors.gradient[self.idx], config.format))
   end, opts)
 
   map('n', config.mappings.choose_format_save, function()
@@ -126,7 +128,7 @@ function B:create_keymaps(bufnr, winnr)
   end, opts)
 
   map('n', '?', function()
-    UI.help:open()
+    ui.help:open()
   end, opts)
 end
 
@@ -154,7 +156,7 @@ function B:update(bufnr, winnr)
   set_option('modifiable', true, { buf = bufnr })
   set_hl(0, 'ColorsPreview', { bg = self.colors.gradient[self.idx] })
 
-  local c_strs = U.format_strings(self.colors.gradient[self.idx], config.format)
+  local c_strs = utils.format_strings(self.colors.gradient[self.idx], config.format)
   local preview = string.format(config.preview, c_strs)
   local lines = string.rep(' ', get_width(winnr) - #preview) .. preview
   local marker = string.rep(' ', math.floor(self.idx / 5) - 1) .. ''
@@ -170,7 +172,7 @@ end
 ---@param line number
 ---@param width number
 function B:display_gradient(bufnr, line, width)
-  local gradient = U.get_gradient(self.colors.first_color, self.colors.second_color, width * 2)
+  local gradient = utils.get_gradient(self.colors.first_color, self.colors.second_color, width * 2)
   local lines = string.rep(' ', width) .. ' '
 
   set_option('modifiable', true, { buf = bufnr })
@@ -193,11 +195,11 @@ end
 function B:export()
   local opts = { 'picker', 'grayscale', 'lighten', 'darken' }
   local function callback(tool)
-    local color_str = U.format_strings(self.colors.gradient[self.idx], 'hex')
+    local color_str = utils.format_strings(self.colors.gradient[self.idx], 'hex')
     require('colors.tools')[tool](color_str)
   end
 
-  U.select(opts, 'Choose tool', callback)
+  utils.select(opts, 'Choose tool', callback)
   self:close()
 end
 
@@ -211,7 +213,7 @@ function B:init(color1, color2)
   self.colors = {
     first_color = color1,
     second_color = color2,
-    gradient = U.get_gradient(color1, color2, 256),
+    gradient = utils.get_gradient(color1, color2, 256),
   }
 end
 
@@ -219,38 +221,38 @@ end
 ---@param color2 string
 function B:blend(color1, color2)
   self:init(color1, color2)
-  UI.main:open({
+  ui.main:open({
     zindex = 100,
     width = 51,
     relative = 'cursor',
     col = 1,
     row = 1,
     height = 3,
-    border = config.border,
+    border = utils.get_border(config.border),
     style = 'minimal',
   })
   vim.go.guicursor = 'a:ColorsCursor'
-  self:create_keymaps(UI.main.buf, UI.main.win)
-  set_option('cursorline', false, { win = UI.main.win })
-  self:display_gradient(UI.main.buf, 0, 50)
-  self:update(UI.main.buf, UI.main.win)
+  self:create_keymaps(ui.main.buf, ui.main.win)
+  set_option('cursorline', false, { win = ui.main.win })
+  self:display_gradient(ui.main.buf, 0, 50)
+  self:update(ui.main.buf, ui.main.win)
 end
 
 function B:create_autocmds()
-  vim.api.nvim_create_autocmd('BufEnter', {
-    group = vim.api.nvim_create_augroup('BlenderOpen', { clear = true }),
+  autocmd('BufEnter', {
+    group = augroup('BlenderOpen', { clear = true }),
     callback = function()
       self:close()
     end,
   })
 
-  vim.api.nvim_create_autocmd('CursorMoved', {
-    group = vim.api.nvim_create_augroup('UpdateBlender', { clear = true }),
+  autocmd('CursorMoved', {
+    group = augroup('UpdateBlender', { clear = true }),
     callback = function()
-      set_cursor(UI.main.win, self.cur_pos)
-      self:update(UI.main.buf, UI.main.win)
+      set_cursor(ui.main.win, self.cur_pos)
+      self:update(ui.main.buf, ui.main.win)
     end,
-    buffer = UI.main.buf,
+    buffer = ui.main.buf,
   })
 end
 

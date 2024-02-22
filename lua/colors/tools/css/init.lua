@@ -10,8 +10,8 @@ local get_height = api.nvim_win_get_height
 local get_win = api.nvim_get_current_win
 
 local logger = require('colors.logger')
-local U = require('colors.utils')
-local UI = require('colors.ui')
+local utils = require('colors.utils')
+local ui = require('colors.ui')
 local config = require('colors').config
 local _gui_cursor = vim.go.guicursor
 
@@ -48,11 +48,11 @@ end
 --- @return string[]|nil
 local function get_list(list_name)
   if not list_name then
-    local list = U.get_formated_colors(config.css.default_list)
+    local list = utils.get_formated_colors(config.css.default_list)
     return list
   end
 
-  local list = U.get_formated_colors(list_name)
+  local list = utils.get_formated_colors(list_name)
   if not list then
     return
   end
@@ -61,8 +61,8 @@ local function get_list(list_name)
 end
 
 function CSS:close()
-  UI.main:close()
-  UI.help:close()
+  ui.main:close()
+  ui.help:close()
   self.prev_win = get_win()
 end
 
@@ -70,14 +70,14 @@ end
 ---@param winnr integer
 function CSS:set_keymaps(bufnr, winnr)
   local opts = { buffer = true, nowait = true, silent = true }
-  U.disable_keymaps(config.mappings.disable)
+  utils.disable_keymaps(config.mappings.disable)
 
   map('n', 'q', function()
     self:close()
   end, opts)
 
   map('n', '?', function()
-    UI.help:open(true)
+    ui.help:open(true)
   end, opts)
 
   map('n', config.mappings.save, function()
@@ -123,9 +123,9 @@ end
 function CSS:replace()
   local hex_string = get_color_from_list()
   self:close()
-  local new_color = U.format_strings(hex_string, config.format)
+  local new_color = utils.format_strings(hex_string, config.format)
   vim.fn.setreg(config.register, new_color)
-  U.replace_under_cursor(new_color, vim.api.nvim_get_current_win(), config.always_insert)
+  utils.replace_under_cursor(new_color, vim.api.nvim_get_current_win(), config.always_insert)
 end
 
 --- Replace color under cursor with choosen format
@@ -162,27 +162,27 @@ function CSS:list(list_name)
   end
 
   local height = math.floor(get_height(0) * 0.8)
-  UI.main:open({
+  ui.main:open({
     relative = 'cursor',
     zindex = 100,
     width = 30,
     col = 1,
     row = 1,
     height = height,
-    border = config.border,
+    border = utils.get_border(config.border),
     style = 'minimal',
   })
 
   if config.always_open_help then
-    UI.help:open(false, true)
+    ui.help:open(false, true)
   end
 
   get_list(list_name)
-  self:set_keymaps(UI.main.buf, UI.main.win)
+  self:set_keymaps(ui.main.buf, ui.main.win)
   self:create_autocmds()
-  set_lines(UI.main.buf, 0, -1, false, list)
-  set_option('cursorline', true, { win = UI.main.win })
-  set_option('modifiable', false, { buf = UI.main.buf })
+  set_lines(ui.main.buf, 0, -1, false, list)
+  set_option('cursorline', true, { win = ui.main.win })
+  set_option('modifiable', false, { buf = ui.main.buf })
   vim.cmd('ColorizerAttachToBuffer')
 end
 

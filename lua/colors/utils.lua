@@ -17,6 +17,26 @@ M.css = {
 --[[============================= GENERAL ====================================]]
 --[[==========================================================================]]
 
+---@param border string|BorderTable
+---@return string|table<string[]>
+function M.get_border(border)
+  if type(border) == 'string' then
+    return border
+  end
+
+  return {
+    border.tl,
+    border.t,
+    border.tr,
+    border.r,
+    border.br,
+    border.b,
+    border.bl,
+    border.r,
+  }
+end
+
+
 --- Returns true if the given string is a valid hexidecimal (#FFFFFF) number
 ---@param str string
 ---@return boolean

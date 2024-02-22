@@ -13,8 +13,8 @@ local map = vim.keymap.set
 -- local logger = require('colors.logger')
 local config = require('colors').config
 local _gui_cursor = vim.go.guicursor
-local U = require('colors.utils')
-local UI = require('colors.ui')
+local utils = require('colors.utils')
+local ui = require('colors.ui')
 
 ---@class ColorPicker
 local Picker = {}
@@ -54,22 +54,22 @@ local function get_bar(_value, max_value, max_width)
 end
 
 function Picker:close()
-  UI.main:close()
-  UI.help:close()
+  ui.main:close()
+  ui.help:close()
 end
 
 ---@param bufnr integer
 ---@param winnr integer
 function Picker:set_keymaps(bufnr, winnr)
   local opts = { buffer = true, nowait = true, silent = true }
-  U.disable_keymaps(config.mappings.disable)
+  utils.disable_keymaps(config.mappings.disable)
 
   map('n', 'q', function()
     self:close()
   end, opts)
 
   map('n', '?', function()
-    UI.help:open(true)
+    ui.help:open(true)
   end, opts)
 
   map('n', config.mappings.increment, function()
@@ -150,22 +150,22 @@ function Picker:set_to_white_or_black(bufnr, winnr, black)
 end
 
 function Picker:make_hex_string()
-  return '#' .. U.hex(self.red) .. U.hex(self.green) .. U.hex(self.blue)
+  return '#' .. utils.hex(self.red) .. utils.hex(self.green) .. utils.hex(self.blue)
 end
 
 function Picker:get_select_opts()
   local hex_string = self:make_hex_string()
   return {
-    'hex: ' .. U.format_strings(hex_string, 'hex'),
-    'rgb: ' .. U.format_strings(hex_string, 'rgb'),
-    'hsl: ' .. U.format_strings(hex_string, 'hsl'),
+    'hex: ' .. utils.format_strings(hex_string, 'hex'),
+    'rgb: ' .. utils.format_strings(hex_string, 'rgb'),
+    'hsl: ' .. utils.format_strings(hex_string, 'hsl'),
   }
 end
 
 function Picker:update_highlights()
-  local red_hex = U.hex(self.red)
-  local green_hex = U.hex(self.green)
-  local blue_hex = U.hex(self.blue)
+  local red_hex = utils.hex(self.red)
+  local green_hex = utils.hex(self.green)
+  local blue_hex = utils.hex(self.blue)
 
   api.nvim_set_hl(0, 'ColorsPreview', {
     bg = '#' .. red_hex .. green_hex .. blue_hex,
@@ -178,9 +178,9 @@ end
 ---@param bufnr integer
 ---@param winnr integer
 function Picker:set_picker_lines(bufnr, winnr)
-  local r_str = U.hex(self.red)
-  local g_str = U.hex(self.green)
-  local b_str = U.hex(self.blue)
+  local r_str = utils.hex(self.red)
+  local g_str = utils.hex(self.green)
+  local b_str = utils.hex(self.blue)
   local hex_str = ' #' .. r_str .. g_str .. b_str .. ' '
   local preview = string.rep(' ', get_width(winnr) - #hex_str) .. hex_str
 
@@ -212,11 +212,11 @@ function Picker:adjust_color(amount, bufnr, winnr)
   end
 
   if row == 1 then
-    self.red = U.adjust_value(self.red, amount)
+    self.red = utils.adjust_value(self.red, amount)
   elseif row == 2 then
-    self.green = U.adjust_value(self.green, amount)
+    self.green = utils.adjust_value(self.green, amount)
   elseif row == 3 then
-    self.blue = U.adjust_value(self.blue, amount)
+    self.blue = utils.adjust_value(self.blue, amount)
   end
 
   self:update(bufnr, winnr)
@@ -238,24 +238,24 @@ function Picker:confirm_select()
       return
     end
 
-    vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), item:sub(1, 3)))
+    vim.fn.setreg(config.register, utils.format_strings(self:make_hex_string(), item:sub(1, 3)))
   end
 
-  U.select(self:get_select_opts(), 'Choose format', callback)
+  utils.select(self:get_select_opts(), 'Choose format', callback)
 end
 
 --- Confirm color and save with default format
 function Picker:confirm()
   self:close()
-  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.format))
+  vim.fn.setreg(config.register, utils.format_strings(self:make_hex_string(), config.format))
 end
 
 --- Replace color under cursor with default format
 function Picker:replace()
   self:close()
-  vim.fn.setreg(config.register, U.format_strings(self:make_hex_string(), config.format))
-  local replacement = U.format_strings(self:make_hex_string(), config.format)
-  U.replace_under_cursor(replacement, get_win(), config.always_insert)
+  vim.fn.setreg(config.register, utils.format_strings(self:make_hex_string(), config.format))
+  local replacement = utils.format_strings(self:make_hex_string(), config.format)
+  utils.replace_under_cursor(replacement, get_win(), config.always_insert)
 end
 
 --- Replace color under cursor with choosen format
@@ -267,10 +267,14 @@ function Picker:replace_select()
       return
     end
 
-    U.replace_under_cursor(U.format_strings(self:make_hex_string(), item:sub(1, 3)), get_win(), config.always_insert)
+    utils.replace_under_cursor(
+      utils.format_strings(self:make_hex_string(), item:sub(1, 3)),
+      get_win(),
+      config.always_insert
+    )
   end
 
-  U.select(self:get_select_opts(), 'Choose format', callback)
+  utils.select(self:get_select_opts(), 'Choose format', callback)
 end
 
 --- Sets a color value to a certain value
@@ -307,18 +311,22 @@ function Picker:set_color(color_value, bufnr, winnr, idx)
 end
 
 function Picker:export()
-  local opts = { 'grayscale', 'lighten', 'darken' }
+  local opts = { 'grayscale', 'lighten', 'darken', 'convert to css name' }
 
   local function callback(tool)
     if not tool then
       return
     end
 
-    local hex_color = '#' .. U.hex(self.red) .. U.hex(self.green) .. U.hex(self.blue)
+    if tool == 'convert to css name' then
+      return
+    end
+
+    local hex_color = '#' .. utils.hex(self.red) .. utils.hex(self.green) .. utils.hex(self.blue)
     require('colors.tools')[tool](hex_color)
   end
 
-  U.select(opts, 'Choose tool', callback)
+  utils.select(opts, 'Choose tool', callback)
   self:close()
 end
 
@@ -328,34 +336,34 @@ function Picker:init(hex_string)
   self.ns_g = create_ns('ColorsPickerGreen')
   self.ns_b = create_ns('ColorsPickerBlue')
   self.cur_pos = { 1, 0 }
-  self.red, self.green, self.blue = U.hex_to_rgb(hex_string)
+  self.red, self.green, self.blue = utils.hex_to_rgb(hex_string)
   self.prev_win = api.nvim_get_current_win()
 end
 
 ---@param hex_string string
 function Picker:pick(hex_string)
   self:init(hex_string)
-  UI.main:open({
+  ui.main:open({
     relative = 'cursor',
     zindex = 100,
     width = 34,
     col = 1,
     row = 1,
     height = 5,
-    border = config.border,
+    border = utils.get_border(config.border),
     style = 'minimal',
   })
 
   if config.always_open_help then
-    UI.help:open(true)
+    ui.help:open(true)
   end
 
-  self:update(UI.main.buf, UI.main.win)
-  self:set_keymaps(UI.main.buf, UI.main.win)
+  self:update(ui.main.buf, ui.main.win)
+  self:set_keymaps(ui.main.buf, ui.main.win)
   self:create_autocmds()
-  set_option('cursorline', true, { win = UI.main.win })
+  set_option('cursorline', true, { win = ui.main.win })
 
-  self:update(UI.main.buf, UI.main.win)
+  self:update(ui.main.buf, ui.main.win)
 end
 
 function Picker:create_autocmds()
@@ -365,7 +373,7 @@ function Picker:create_autocmds()
     group = PickerGroup,
     callback = function()
       vim.go.guicursor = 'a:ColorsCursor'
-      local cursor = get_cursor(UI.main.win)
+      local cursor = get_cursor(ui.main.win)
       local row = self.cur_pos[1]
       local bigger = false
       if cursor[1] > self.cur_pos[1] or cursor[2] > self.cur_pos[2] then
@@ -381,11 +389,11 @@ function Picker:create_autocmds()
           row = 3
         end
       end
-      set_cursor(UI.main.win, { row, 0 })
-      api.nvim_buf_clear_namespace(UI.main.buf, self.ns_main, 0, 3)
+      set_cursor(ui.main.win, { row, 0 })
+      api.nvim_buf_clear_namespace(ui.main.buf, self.ns_main, 0, 3)
       self.cur_pos = { row, 0 }
     end,
-    buffer = UI.main.buf,
+    buffer = ui.main.buf,
   })
 
   autocmd('BufEnter', {

@@ -136,8 +136,10 @@
 --- Fallback color to use if a color under the cursor is not found.
 --- Allows the ability to open a tool with that color as a starting point.
 ---@field fallback_color? string
---- Sets the border for the UI windows
----@field border? string
+--- Sets the border for the UI windows.
+--- Accpets the standard border options for `vim.api.nvim_buf_open_win()` or
+--- can accept a `BorderTable`.
+---@field border? string|BorderTable
 --- Enables debug logging
 ---@field debug? boolean
 --- Keymaps for the tools
@@ -213,6 +215,38 @@
 ---@alias RGB { [1]: integer, [2]: integer, [3]: integer }
 ---@alias ColorListItem { [1]: string, [2]: string }
 ---@alias ColorListName 'base'|'chakra'|'mui'|'tailwind'
+
+--- Table of string tuples. Each tuple must contain a single character and a highlight group.
+--- There must be 8 total tuples.
+---
+--- ---
+---
+--- Example:
+--- ```lua
+--- local hl = 'MyBorderHighlight'
+--- local border = {
+---    tl = { '╭', hl },  t = { '─', hl }, tr = { '╮', hl },
+---    l  = { '│', hl },                   r =  { '│', hl },
+---    bl = { '╰', hl },  b = { '─', hl }, br = { '╯', hl },
+--- }
+--- ```
+---@class BorderTable
+--- The top left borderchar and highlight group
+---@field tl { [1]: string, [2]: string }
+--- The top borderchar and highlight group
+---@field t { [1]: string, [2]: string }
+--- The top right borderchar and highlight group
+---@field tr { [1]: string, [2]: string }
+--- The right borderchar and highlight group
+---@field r { [1]: string, [2]: string }
+--- The bottom borderchar and highlight group
+---@field b { [1]: string, [2]: string }
+--- The bottom left borderchar and highlight group
+---@field bl { [1]: string, [2]: string }
+--- The bottom right borderchar and highlight group
+---@field br { [1]: string, [2]: string }
+--- The left borderchar and highlight group
+---@field l { [1]: string, [2]: string }
 
 ---@alias CssListOrder
 ---| {[1]: 'base',     [2]: 'chakra',   [3]: 'mui',      [4]: 'tailwind'}
