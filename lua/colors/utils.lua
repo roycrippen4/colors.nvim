@@ -36,7 +36,6 @@ function M.get_border(border)
   }
 end
 
-
 --- Returns true if the given string is a valid hexidecimal (#FFFFFF) number
 ---@param str string
 ---@return boolean
@@ -56,16 +55,16 @@ function M.select(opts, prompt, callback)
   end)
 end
 
-    --- Get the hex code of a number
-    ---@param int integer 
-    ---@return string
+--- Get the hex code of a number
+---@param int integer
+---@return string
 function M.hex(int)
   return tostring(bit.tohex(int, 2)):upper()
 end
 
-    --- Rounds a float
-    ---@param number float
-    ---@return number rounded
+--- Rounds a float
+---@param number float
+---@return number rounded
 function M.round_float(number)
   if number - math.floor(number) < 0.5 then
     return math.floor(number)
@@ -74,18 +73,18 @@ function M.round_float(number)
   end
 end
 
-    --- Adjust a color value (kept inside 0-255)
-    ---@param value number
-    ---@param amount number
-    ---@return number adjusted
+--- Adjust a color value (kept inside 0-255)
+---@param value number
+---@param amount number
+---@return number adjusted
 function M.adjust_value(value, amount)
   value = value + amount
   return math.max(math.min(value, 255), 0)
 end
 
-    --- Gets a partial block for a number between 0 and 1
-    ---@param number number
-    ---@return string
+--- Gets a partial block for a number between 0 and 1
+---@param number number
+---@return string
 function M.get_partial_block(number)
   if number >= 0.875 then
     return '▉'
@@ -106,11 +105,11 @@ function M.get_partial_block(number)
   end
 end
 
-    --- Produces a progress bar
-    ---@param value number
-    ---@param max_value number Max possible value
-    ---@param max_width number Max possible width
-    ---@return string Bar
+--- Produces a progress bar
+---@param value number
+---@param max_value number Max possible value
+---@param max_width number Max possible width
+---@return string Bar
 function M.get_bar(value, max_value, max_width)
   local block_value = max_value / max_width
   local bar = string.rep('█', math.floor(value / block_value))
@@ -121,9 +120,9 @@ end
 --[[============================== COLORS ====================================]]
 --[[==========================================================================]]
 
-    --- Gets the values of a hex color
-    ---@param hex_string string "#xxxxxx"
-    ---@return number, number, number "red,green,blue"
+--- Gets the values of a hex color
+---@param hex_string string "#xxxxxx"
+---@return number, number, number "red,green,blue"
 function M.hex_to_rgb(hex_string)
   local red = tonumber(hex_string:sub(2, 3), 16)
   local green = tonumber(hex_string:sub(4, 5), 16)
@@ -131,11 +130,11 @@ function M.hex_to_rgb(hex_string)
   return red, green, blue
 end
 
-    --- Get colors for a gradient
-    ---@param start_color string "#xxxxxx"
-    ---@param end_color string "#xxxxxx"
-    ---@param length number
-    ---@return table|nil colors
+--- Get colors for a gradient
+---@param start_color string "#xxxxxx"
+---@param end_color string "#xxxxxx"
+---@param length number
+---@return table|nil colors
 function M.get_gradient(start_color, end_color, length)
   local points = length - 2
   if points < 0 then
@@ -169,9 +168,9 @@ function M.get_gradient(start_color, end_color, length)
   return colors
 end
 
-    --- Gets the gray color for a certain color
-    ---@param color string "#xxxxxx"
-    ---@return string color
+--- Gets the gray color for a certain color
+---@param color string "#xxxxxx"
+---@return string color
 function M.get_gray(color)
   local red, green, blue = M.hex_to_rgb(color)
   local amount = red * 0.2126 + green * 0.7152 + blue * 0.0722
@@ -179,9 +178,9 @@ function M.get_gray(color)
   return '#' .. string.rep(single_hex, 3)
 end
 
-    --- Gets complementary color
-    ---@param color string "#xxxxxx"
-    ---@return string color
+--- Gets complementary color
+---@param color string "#xxxxxx"
+---@return string color
 function M.complementary(color)
   local Xred, Xgreen, Xblue = M.hex_to_rgb(color)
   local red = M.hex(255 - Xred)
@@ -190,12 +189,12 @@ function M.complementary(color)
   return '#' .. red .. green .. blue
 end
 
-    -- functions from https://github.com/NTBBloodbath/color-converter.nvim
-    --- Converts rgb to hsl
-    ---@param r number
-    ---@param g number
-    ---@param b number
-    ---@return table
+-- functions from https://github.com/NTBBloodbath/color-converter.nvim
+--- Converts rgb to hsl
+---@param r number
+---@param g number
+---@param b number
+---@return table
 function M.rgb_to_hsl(r, g, b)
   r = r / 255
   g = g / 255
@@ -231,11 +230,11 @@ function M.rgb_to_hsl(r, g, b)
   }
 end
 
-    --- Converts hue to rgb
-    ---@param p number
-    ---@param q number
-    ---@param t number
-    ---@return number
+--- Converts hue to rgb
+---@param p number
+---@param q number
+---@param t number
+---@return number
 local function hue_to_rgb(p, q, t)
   if t < 0 then
     t = t + 1
@@ -256,11 +255,11 @@ local function hue_to_rgb(p, q, t)
   return p
 end
 
-    --- Converts hsl to rgb
-    ---@param h number
-    ---@param s number
-    ---@param l number
-    ---@return table
+--- Converts hsl to rgb
+---@param h number
+---@param s number
+---@param l number
+---@return table
 function M.hsl_to_rgb(h, s, l)
   h = h / 360
   s = s / 100
@@ -287,10 +286,10 @@ function M.hsl_to_rgb(h, s, l)
   }
 end
 
-    ---@param match string | nil
-    ---@param format_type string
-    ---@param offset integer
-    ---@return Prefix|nil
+---@param match string | nil
+---@param format_type string
+---@param offset integer
+---@return Prefix|nil
 local function get_prefix(match, format_type, offset)
   if format_type ~= 'tailwind' or not match then
     return
@@ -310,14 +309,14 @@ local function get_prefix(match, format_type, offset)
   end
 end
 
-    ---@param  line string
-    ---@param  column integer
-    ---@return ColorTable|nil
+---@param  line string
+---@param  column integer
+---@return ColorTable|nil
 function M.get_color_table(line, column)
   local formats = {
     {
-          ---@param match string
-          ---@return RGB
+      ---@param match string
+      ---@return RGB
       get_rgb_table = function(match)
         local color = match:match('(%a+)')
         local shade = match:match('(%d+)')
@@ -329,8 +328,8 @@ function M.get_color_table(line, column)
       type = 'chakra',
     },
     {
-          ---@param match string
-          ---@return RGB
+      ---@param match string
+      ---@return RGB
       get_rgb_table = function(match)
         local color = match:match('(%a+)')
         local shade = match:match('(%d+)')
@@ -349,8 +348,8 @@ function M.get_color_table(line, column)
     },
 
     {
-          ---@param match string
-          ---@return RGB
+      ---@param match string
+      ---@return RGB
       get_rgb_table = function(match)
         local color = match:match('(%a+)')
         local shade = match:match('(%d+)')
@@ -361,8 +360,8 @@ function M.get_color_table(line, column)
       pattern = '(%f[%w-]()[^:%s][%w-]*%-[a-z%-]+%-%d+()%f[^%w-])',
     },
     {
-          ---@param match string
-          ---@return RGB
+      ---@param match string
+      ---@return RGB
       get_rgb_table = function(match)
         local r, g, b = M.hex_to_rgb(match)
         return { r, g, b }
@@ -371,8 +370,8 @@ function M.get_color_table(line, column)
       pattern = '#%x%x%x%x%x%x',
     },
     {
-          ---@param match string
-          ---@return RGB
+      ---@param match string
+      ---@return RGB
       get_rgb_table = function(match)
         local r, g, b = match:match('rgb%(%s*(%d+)%s*,%s*(%d+)%s*,%s*(%d+)%s*%)')
 
@@ -386,8 +385,8 @@ function M.get_color_table(line, column)
       pattern = 'rgb%(%s*%d+%s*,%s*%d+%s*,%s*%d+%s*%)',
     },
     {
-          ---@param match string
-          ---@return RGB
+      ---@param match string
+      ---@return RGB
       get_rgb_table = function(match)
         local values = {
           match:match('rgb%(%s*(%d+)%%%s*,%s*(%d+)%%%s*,%s*(%d+)%%%s*%)'),
@@ -468,8 +467,9 @@ end
 -- hsl(210, 99%, 14%)
 --
 -- red aliceblue
+-- bg-
 
-    ---@return ColorTable|nil
+---@return ColorTable|nil
 function M.get_color_under_cursor()
   local cursor = get_cursor(0)
   local row = cursor[1]
@@ -483,11 +483,11 @@ function M.get_color_under_cursor()
   return color_table
 end
 
-    --- Tries to replace the color under the cursor.
-    --- If one can't be found, than it simply inserts it at the cursor position
-    ---@param replacement string The string to insert
-    ---@param winnr integer the current winnr
-    ---@param default_insert boolean If a color isn't found under the cursor, insert it in place instead
+--- Tries to replace the color under the cursor.
+--- If one can't be found, than it simply inserts it at the cursor position
+---@param replacement string The string to insert
+---@param winnr integer the current winnr
+---@param default_insert boolean If a color isn't found under the cursor, insert it in place instead
 function M.replace_under_cursor(replacement, winnr, default_insert)
   local cursor = get_cursor(winnr)
   local color_table = M.get_color_under_cursor()
@@ -498,6 +498,10 @@ function M.replace_under_cursor(replacement, winnr, default_insert)
       return
     end
     return
+  end
+
+  if color_table.type == 'tailwind' and not replacement:match('%-') then
+    color_table.start_pos = color_table.prefix.start
   end
 
   assert(color_table) -- it was whining, but the nil case is delt with above
@@ -511,10 +515,8 @@ function M.replace_under_cursor(replacement, winnr, default_insert)
   )
 end
 
---- aliceblue
-
-    ---@param colors ColorTable
-    ---@return ColorTable|nil
+---@param colors ColorTable
+---@return ColorTable|nil
 function M.validate(colors)
   if not colors.type or not colors.rgb_values or not colors.end_pos or not colors.start_pos or not colors.match then
     return
@@ -532,9 +534,9 @@ function M.validate(colors)
   return nil
 end
 
-    ---@param r integer
-    ---@param g integer
-    ---@param b integer
+---@param r integer
+---@param g integer
+---@param b integer
 function M.validate_rgb(r, g, b)
   return r and g and b and r <= 255 and g <= 255 and b <= 255 and r >= 0 and g >= 0 and b >= 0
 end
@@ -661,27 +663,24 @@ function M.hex_to_css(hex)
     return
   end
 
-  local best = { list_name = '', color_name = '',   shade = nil, dist = math.huge}
+  local best = { list_name = '', color_name = '', shade = nil, dist = math.huge }
 
   for list_name, _ in pairs(M.css) do
     if list_name == 'base' then
       best = M.search_base_list(hex, best)
-      goto continue
+    else
+      best = M.search_css_list(hex, best, list_name)
     end
-
-    best = M.search_css_list(hex, best, list_name)
-    ::continue::
   end
 
-  if best and  best.list_name and best.color_name and best.dist ~= math.huge then
+  if best and best.list_name and best.color_name and best.dist ~= math.huge then
     return best
   end
-
 end
 
 ---@param user_hex string
 ---@param best { list_name: string, color_name: string, shade: string|integer|nil, dist: number }
----@param list_name string 
+---@param list_name string
 ---@return { list_name: string, color_name: string, shade: string|integer|nil, dist: number}
 function M.search_css_list(user_hex, best, list_name)
   local list = M.css[list_name]
@@ -722,10 +721,10 @@ function M.search_base_list(user_hex, best)
   return best
 end
 
----@param hex_string string The color to search for the closest match
----@param list_name? string The name of the list to search for the closest match.
+-----@param hex_string string The color to search for the closest match
+-----@param list_name? string The name of the list to search for the closest match.
 ---         Uses default css list if undefined
----@return string
+-----@return string
 -- function M.replace_with_css_name(hex_string, list_name) end
 
 return M

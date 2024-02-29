@@ -13,7 +13,7 @@ local M = {
       -- Sets the default list of css colors to choose from. Options: 'base'|'mui'|'chakra'|'tailwind'
       default_list = 'tailwind',
       -- True uses the css color name by default. False uses associated hex value
-      use_names = false,
+      use_names = true,
       -- Configuration for Telescope
       telescope_config = {
         -- Sets the telescope theme. Options: 'dropdown'|'ivy'|'cursor'

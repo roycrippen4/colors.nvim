@@ -12,7 +12,7 @@ local map = vim.keymap.set
 local win_close = api.nvim_win_close
 local config = require('colors').config
 local utils = require('colors.utils')
-local logger = require('colors.logger')
+-- local logger = require('colors.logger')
 
 local main = {} ---@class MainUI
 local help = {} ---@class HelpUI

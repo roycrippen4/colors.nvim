@@ -1,5 +1,4 @@
 local has_telescope, telescope = pcall(require, 'telescope')
--- local logger = require('colors.logger')
 
 if not has_telescope then
   error('This plugin requires telescope.nvim')
@@ -45,9 +44,9 @@ local attach_mappings = function(prompt_bufnr, _)
 
     ---@type { [1]: string, [2]: string }
     local selection = actions_state.get_selected_entry().value
-    local color = (_config.use_names and selection[1]) or selection[2]
+    local color = (config.css.use_names and selection[1]) or selection[2]
 
-    if _config.always_save or _config.fallback_behavior == 'save' then
+    if config.always_save or _config.fallback_behavior == 'save' then
       vim.fn.setreg(config.register, color)
     end
 
